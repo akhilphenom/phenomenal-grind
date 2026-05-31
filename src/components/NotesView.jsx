@@ -11,17 +11,16 @@ const STYLES = `
 
 /* ── Sidebar ── */
 .notes-sidebar {
-  width: 240px;
-  min-width: 240px;
   background: var(--surface);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   min-height: 0;
-  transition: width 0.2s ease, min-width 0.2s ease, opacity 0.2s ease;
+  transition: opacity 0.2s ease;
+  overflow: hidden;
 }
 .notes-sidebar.collapsed {
-  width: 0;
+  width: 0 !important;
   min-width: 0;
   overflow: hidden;
   opacity: 0;
@@ -95,10 +94,10 @@ const STYLES = `
   position: relative;
   display: flex;
   align-items: center;
-  gap: 6px;
-  min-height: 30px;
-  padding: 3px 8px;
-  border-radius: 6px;
+  gap: 4px;
+  min-height: 28px;
+  padding: 2px 6px;
+  border-radius: 5px;
   cursor: default;
   transition: background 0.12s, border-color 0.12s;
   border: 1px solid transparent;
@@ -138,10 +137,11 @@ const STYLES = `
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  overflow: hidden;
 }
 .notes-tree-toggle {
-  width: 16px; height: 16px;
+  width: 14px; height: 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -150,18 +150,19 @@ const STYLES = `
   color: var(--text-muted);
   padding: 0;
   cursor: pointer;
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   transition: transform 0.15s;
+  flex-shrink: 0;
 }
 .notes-tree-toggle:hover { color: var(--text); }
-.notes-tree-icon { width: 16px; text-align: center; font-size: 0.82rem; flex-shrink: 0; }
+.notes-tree-icon { width: 14px; text-align: center; font-size: 0.72rem; flex-shrink: 0; }
 .notes-tree-label {
   flex: 1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
 }
 .notes-tree-label.muted { color: var(--text-muted); font-style: italic; }
 .notes-tree-label-btn { all: unset; flex: 1; min-width: 0; cursor: pointer; }
@@ -179,34 +180,72 @@ const STYLES = `
 
 .notes-tree-actions {
   display: inline-flex;
-  gap: 4px;
+  gap: 2px;
   opacity: 0;
   transition: opacity 0.12s;
+  flex-shrink: 0;
 }
 .notes-tree-row:hover .notes-tree-actions { opacity: 1; }
 
 .notes-tree-action {
-  width: 22px; height: 22px;
-  border-radius: 5px;
+  width: 18px; height: 18px;
+  border-radius: 4px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--border);
-  background: var(--surface2);
+  border: none;
+  background: transparent;
   color: var(--text-muted);
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   padding: 0;
   transition: all 0.12s;
 }
 .notes-tree-action:hover {
-  border-color: var(--accent);
+  background: var(--surface2);
   color: var(--accent-light);
 }
 .notes-tree-action.delete:hover {
-  border-color: #ff7b7b;
   color: #ff9d9d;
   background: rgba(255,123,123,0.1);
+}
+
+/* Context menu */
+.notes-ctx-menu {
+  position: absolute;
+  right: 4px;
+  top: 100%;
+  z-index: 100;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 0;
+  min-width: 130px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+}
+.notes-ctx-item {
+  display: block;
+  width: 100%;
+  padding: 5px 12px;
+  border: none;
+  background: none;
+  color: var(--text);
+  font-size: 0.72rem;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.notes-ctx-item:hover {
+  background: rgba(124,92,252,0.12);
+}
+.notes-ctx-item.delete:hover {
+  background: rgba(255,123,123,0.1);
+  color: #ff9d9d;
+}
+.notes-ctx-sep {
+  height: 1px;
+  background: var(--border);
+  margin: 3px 8px;
 }
 
 .notes-tree-children {
@@ -219,6 +258,25 @@ const STYLES = `
 .notes-tree-children-inner { min-height: 0; overflow: hidden; }
 
 /* ── Editor area ── */
+.notes-resize-handle {
+  width: 4px;
+  cursor: col-resize;
+  background: transparent;
+  transition: background 0.15s;
+  flex-shrink: 0;
+  position: relative;
+}
+.notes-resize-handle:hover,
+.notes-resize-handle.dragging {
+  background: var(--accent);
+}
+.notes-resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  left: -4px; right: -4px;
+}
+
 .notes-editor {
   flex: 1;
   min-width: 0;
@@ -363,6 +421,9 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
   const [expandedFolders, setExpandedFolders] = useState(() => new Set());
   const [showRough, setShowRough] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarWidth, setSidebarWidth] = useState(240);
+  const [isResizing, setIsResizing] = useState(false);
+  const [contextMenu, setContextMenu] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [draftTitle, setDraftTitle] = useState('');
   const [dragId, setDragId] = useState(null);
@@ -435,6 +496,33 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
     if (!selectedNote) return;
     onUpdateNote?.({ ...selectedNote, [field]: value, updatedAt: new Date().toISOString() });
   }, [selectedNote, onUpdateNote]);
+
+  // ── Close context menu on outside click ──
+  useEffect(() => {
+    if (!contextMenu) return;
+    const handler = () => setContextMenu(null);
+    document.addEventListener('click', handler);
+    return () => document.removeEventListener('click', handler);
+  }, [contextMenu]);
+
+  // ── Sidebar resize ──
+  const handleResizeStart = useCallback((e) => {
+    e.preventDefault();
+    setIsResizing(true);
+    const startX = e.clientX;
+    const startW = sidebarWidth;
+    const onMove = (ev) => {
+      const newW = Math.max(160, Math.min(450, startW + ev.clientX - startX));
+      setSidebarWidth(newW);
+    };
+    const onUp = () => {
+      setIsResizing(false);
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  }, [sidebarWidth]);
 
   // ── Drag helpers ──
   const getDescendantIds = useCallback((id) => {
@@ -558,14 +646,23 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
             </div>
 
             <div className="notes-tree-actions">
-              {isFolder && (
-                <>
-                  <button type="button" className="notes-tree-action" onClick={() => onAddNote?.(item.id)} title="Add note">📄</button>
-                  <button type="button" className="notes-tree-action" onClick={() => onAddFolder?.(item.id)} title="Add folder">📁</button>
-                </>
+              <button type="button" className="notes-tree-action" onClick={(e) => {
+                e.stopPropagation();
+                setContextMenu(prev => prev === item.id ? null : item.id);
+              }} title="Actions">⋯</button>
+              {contextMenu === item.id && (
+                <div className="notes-ctx-menu" onClick={e => e.stopPropagation()}>
+                  {isFolder && (
+                    <>
+                      <button className="notes-ctx-item" onClick={() => { onAddNote?.(item.id); setContextMenu(null); }}>📄 Add Note</button>
+                      <button className="notes-ctx-item" onClick={() => { onAddFolder?.(item.id); setContextMenu(null); }}>📁 Add Folder</button>
+                      <div className="notes-ctx-sep" />
+                    </>
+                  )}
+                  <button className="notes-ctx-item" onClick={() => { setEditingId(item.id); setDraftTitle(item.title || ''); setContextMenu(null); }}>✏️ Rename</button>
+                  <button className="notes-ctx-item delete" onClick={() => { onDeleteNote?.(item.id); setContextMenu(null); }}>✕ Delete</button>
+                </div>
               )}
-              <button type="button" className="notes-tree-action" onClick={() => { setEditingId(item.id); setDraftTitle(item.title || ''); }} title="Rename">✏️</button>
-              <button type="button" className="notes-tree-action delete" onClick={() => onDeleteNote?.(item.id)} title="Delete">✕</button>
             </div>
           </div>
 
@@ -613,7 +710,7 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
       <style>{STYLES}</style>
 
       {/* Sidebar */}
-      <aside className={`notes-sidebar${sidebarOpen ? '' : ' collapsed'}`}>
+      <aside className={`notes-sidebar${sidebarOpen ? '' : ' collapsed'}`} style={sidebarOpen ? { width: sidebarWidth, minWidth: sidebarWidth } : undefined}>
         <div className="notes-sidebar-header">
           <div className="notes-sidebar-title-row">
             <span className="notes-sidebar-title">Vault</span>
@@ -628,6 +725,14 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
           {renderTree(null, 0)}
         </div>
       </aside>
+
+      {/* Resize handle */}
+      {sidebarOpen && (
+        <div
+          className={`notes-resize-handle${isResizing ? ' dragging' : ''}`}
+          onMouseDown={handleResizeStart}
+        />
+      )}
 
       {/* Editor */}
       <section className="notes-editor">

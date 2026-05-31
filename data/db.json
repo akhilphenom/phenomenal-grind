@@ -17758,9 +17758,56 @@
           "agc": 0,
           "notes": ""
         }
-      }
+      },
+      "checklist": [
+        {
+          "text": "Solve LeetCode problems",
+          "done": false
+        },
+        {
+          "text": "System Design study",
+          "done": false
+        },
+        {
+          "text": "Drink 8 glasses of water",
+          "done": true
+        },
+        {
+          "text": "Exercise / Workout",
+          "done": false
+        },
+        {
+          "text": "Log sleep schedule",
+          "done": false
+        },
+        {
+          "text": "Write daily journal",
+          "done": false
+        }
+      ]
     }
   ],
   "$schema": "./node_modules/json-server/schema.json",
-  "notes": []
+  "notes": [
+    {
+      "id": "folder-1780237164845",
+      "title": "Competetive Programming",
+      "parentId": null,
+      "type": "folder",
+      "content": "",
+      "rough": "",
+      "createdAt": "2026-05-31T14:19:24.845Z",
+      "updatedAt": "2026-05-31T14:19:32.406Z"
+    },
+    {
+      "id": "folder-1780237179081",
+      "title": "Yash Poonia",
+      "parentId": "folder-1780237164845",
+      "type": "folder",
+      "content": "",
+      "rough": "",
+      "createdAt": "2026-05-31T14:19:39.081Z",
+      "updatedAt": "2026-05-31T14:19:46.933Z"
+    }
+  ]
 }
