@@ -483,13 +483,6 @@ export default function ProblemList({ problems = [], onUpdate, onOpenProblem }) 
   const [statusFilter, setStatusFilter] = useState('All');
   const [tagFilters, setTagFilters] = useState([]);
 
-  // Derive all tags from problems data + hardcoded base tags
-  const allTags = useMemo(() => {
-    const tagSet = new Set(AVAILABLE_TAGS);
-    problems.forEach((p) => (p.tags || []).forEach((t) => tagSet.add(t)));
-    return [...tagSet].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-  }, [problems]);
-
   const filteredProblems = useMemo(() => (
     problems.filter((problem) => {
       const matchesDifficulty = difficultyFilter === 'All' || problem.difficulty === difficultyFilter;
@@ -614,7 +607,7 @@ export default function ProblemList({ problems = [], onUpdate, onOpenProblem }) 
         <div className="pl-control">
           <span className="pl-label">Tag filters</span>
           <div className="pl-tag-grid">
-            {allTags.map((tag) => (
+            {AVAILABLE_TAGS.map((tag) => (
               <button
                 key={tag}
                 type="button"
@@ -684,7 +677,7 @@ export default function ProblemList({ problems = [], onUpdate, onOpenProblem }) 
           <div className="pl-form-field">
             <span className="pl-label">Tags</span>
             <div className="pl-tag-grid">
-              {allTags.map((tag) => (
+              {AVAILABLE_TAGS.map((tag) => (
                 <button
                   key={tag}
                   type="button"
