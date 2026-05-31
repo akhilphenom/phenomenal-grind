@@ -17797,7 +17797,8 @@
       "content": "",
       "rough": "",
       "createdAt": "2026-05-31T14:19:24.845Z",
-      "updatedAt": "2026-05-31T14:19:32.406Z"
+      "updatedAt": "2026-05-31T14:19:32.406Z",
+      "sortOrder": 0
     },
     {
       "id": "folder-1780237179081",
@@ -17807,7 +17808,56 @@
       "content": "",
       "rough": "",
       "createdAt": "2026-05-31T14:19:39.081Z",
-      "updatedAt": "2026-05-31T14:19:46.933Z"
+      "updatedAt": "2026-05-31T14:19:46.933Z",
+      "sortOrder": 0
+    },
+    {
+      "id": "note-1780237984917",
+      "title": "Index",
+      "parentId": "folder-1780237179081",
+      "type": "note",
+      "content": "## **Topics**\n1. Number Theory\n2. Binary Search\n3. Master DFS\n4. \n",
+      "rough": "",
+      "createdAt": "2026-05-31T14:33:04.917Z",
+      "updatedAt": "2026-05-31T17:58:50.014Z",
+      "sortOrder": 0,
+      "code": "int main() {\n  \n}",
+      "codeLanguage": "cpp"
+    },
+    {
+      "id": "note-1780238003106",
+      "title": "z-index",
+      "parentId": "folder-1780237179081",
+      "type": "note",
+      "content": "",
+      "rough": "",
+      "createdAt": "2026-05-31T14:33:23.106Z",
+      "updatedAt": "2026-05-31T14:55:41.694Z",
+      "sortOrder": 2
+    },
+    {
+      "id": "note-1780238017404",
+      "title": "Number Theory",
+      "parentId": "folder-1780237179081",
+      "type": "note",
+      "content": "",
+      "rough": "",
+      "createdAt": "2026-05-31T14:33:37.404Z",
+      "updatedAt": "2026-05-31T14:34:04.367Z",
+      "sortOrder": 2
+    }
+  ],
+  "preferences": [
+    {
+      "id": "user",
+      "notes": {
+        "showPreview": true,
+        "showCode": false
+      },
+      "sidebar": {
+        "collapsed": false
+      },
+      "activeView": "notes"
     }
   ]
 }

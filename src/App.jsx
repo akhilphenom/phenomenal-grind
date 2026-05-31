@@ -13,6 +13,7 @@ import {
   addProblem as apiAddProblem, deleteProblem as apiDeleteProblem,
   fetchAllDaily, saveDaily,
   fetchNotes, addNote as apiAddNote, updateNote as apiUpdateNote, deleteNote as apiDeleteNote,
+  fetchPreferences, savePreferences,
 } from './api';
 
 function todayKey() {
@@ -40,15 +41,19 @@ export default function App() {
   const [notes, setNotes] = useState([]);
   const [openProblem, setOpenProblem] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const [prefs, setPrefs] = useState({});
   const saveTimer = useRef(null);
+  const prefsTimer = useRef(null);
 
   // Load all data from json-server on mount
   useEffect(() => {
-    Promise.all([fetchAllDaily(), fetchProblems(), fetchNotes()])
-      .then(([daily, probs, notesData]) => {
+    Promise.all([fetchAllDaily(), fetchProblems(), fetchNotes(), fetchPreferences()])
+      .then(([daily, probs, notesData, prefsData]) => {
         setAllData(daily);
         setProblems(probs);
         setNotes(notesData);
+        if (prefsData.activeView) setActiveTab(prefsData.activeView);
+        setPrefs(prefsData);
         setLoaded(true);
       })
       .catch((e) => {
@@ -56,6 +61,24 @@ export default function App() {
         setLoaded(true);
       });
   }, []);
+
+  // Save preferences (debounced)
+  const updatePrefs = useCallback((patch) => {
+    setPrefs(prev => {
+      const next = { ...prev, ...patch };
+      clearTimeout(prefsTimer.current);
+      prefsTimer.current = setTimeout(() => {
+        savePreferences(next).catch(e => console.error('Prefs save failed:', e));
+      }, 300);
+      return next;
+    });
+  }, []);
+
+  // Persist activeTab to prefs
+  const handleSetActiveTab = useCallback((tab) => {
+    setActiveTab(tab);
+    updatePrefs({ activeView: tab });
+  }, [updatePrefs]);
 
   // Debounced save for daily data
   const saveDayData = useCallback((dateKey, data) => {
@@ -208,7 +231,7 @@ export default function App() {
   if (!loaded) {
     return (
       <div className="app-layout">
-        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} streak={0} />
+        <Sidebar activeTab={activeTab} onTabChange={handleSetActiveTab} streak={0} />
         <div className="content-area" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Loading...</p>
         </div>
@@ -218,7 +241,7 @@ export default function App() {
 
   return (
     <div className="app-layout">
-      <Sidebar activeTab={activeTab} onTabChange={(tab) => { setActiveTab(tab); setOpenProblem(null); }} streak={streak} />
+      <Sidebar activeTab={activeTab} onTabChange={(tab) => { handleSetActiveTab(tab); setOpenProblem(null); }} streak={streak} />
 
       <div className="content-area">
         {!hideHeader && (
@@ -278,6 +301,8 @@ export default function App() {
               onAddFolder={handleAddFolder}
               onUpdateNote={handleUpdateNote}
               onDeleteNote={handleDeleteNote}
+              prefs={prefs.notes || {}}
+              onPrefsChange={(notePrefs) => updatePrefs({ notes: { ...(prefs.notes || {}), ...notePrefs } })}
             />
           )}
         </main>

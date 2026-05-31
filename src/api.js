@@ -93,3 +93,19 @@ export async function updateNote(note) {
 export async function deleteNote(id) {
   await fetch(`${API}/notes/${id}`, { method: 'DELETE' });
 }
+
+// ─── Preferences ───
+export async function fetchPreferences() {
+  const res = await fetch(`${API}/preferences/user`);
+  if (!res.ok) return {};
+  return res.json();
+}
+
+export async function savePreferences(prefs) {
+  const res = await fetch(`${API}/preferences/user`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: 'user', ...prefs }),
+  });
+  return res.json();
+}

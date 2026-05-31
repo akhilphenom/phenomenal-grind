@@ -19,7 +19,7 @@ const TOOLBAR = [
   { label: '---', title: 'Horizontal Rule', insert: '\n---\n' },
 ];
 
-function renderMarkdown(text) {
+export function renderMarkdown(text) {
   if (!text) return '<p class="md-empty">Nothing written yet...</p>';
 
   let html = text
@@ -154,6 +154,10 @@ const STYLES = `
   background: var(--accent);
   color: #fff;
 }
+.md-mode-btn.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
 
 .md-body {
   flex: 1;
@@ -271,9 +275,12 @@ const STYLES = `
 }
 `;
 
-export default function MarkdownEditor({ value, onChange, placeholder, label }) {
+export default function MarkdownEditor({ value, onChange, placeholder, label, livePreview }) {
   const [mode, setMode] = useState('write');
   const textareaRef = useRef(null);
+
+  // Force write mode when live preview pane is open externally
+  const effectiveMode = livePreview ? 'write' : mode;
 
   const handleToolbar = useCallback((item) => {
     const el = textareaRef.current;
@@ -361,15 +368,17 @@ export default function MarkdownEditor({ value, onChange, placeholder, label }) 
         <div className="md-mode-toggle">
           <button
             type="button"
-            className={`md-mode-btn${mode === 'write' ? ' active' : ''}`}
+            className={`md-mode-btn${effectiveMode === 'write' ? ' active' : ''}`}
             onClick={() => setMode('write')}
           >
             Write
           </button>
           <button
             type="button"
-            className={`md-mode-btn${mode === 'preview' ? ' active' : ''}`}
-            onClick={() => setMode('preview')}
+            className={`md-mode-btn${effectiveMode === 'preview' ? ' active' : ''}${livePreview ? ' disabled' : ''}`}
+            onClick={() => !livePreview && setMode('preview')}
+            disabled={livePreview}
+            title={livePreview ? 'Preview is shown in separate pane' : 'Preview'}
           >
             Preview
           </button>
@@ -377,7 +386,7 @@ export default function MarkdownEditor({ value, onChange, placeholder, label }) 
       </div>
 
       <div className="md-body">
-        {mode === 'write' ? (
+        {effectiveMode === 'write' ? (
           <textarea
             ref={textareaRef}
             className="md-textarea"

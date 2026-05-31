@@ -1,5 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import MarkdownEditor from './MarkdownEditor';
+import MarkdownEditor, { renderMarkdown } from './MarkdownEditor';
+import CodeMirror from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+import { python } from '@codemirror/lang-python';
+import { java } from '@codemirror/lang-java';
+import { cpp } from '@codemirror/lang-cpp';
+import { tokyoNight } from '@uiw/codemirror-theme-tokyo-night';
+
+const LANGS = {
+  javascript: { label: 'JavaScript', ext: javascript },
+  python: { label: 'Python', ext: python },
+  java: { label: 'Java', ext: java },
+  cpp: { label: 'C++', ext: cpp },
+};
 
 const STYLES = `
 .notes-view {
@@ -185,7 +198,8 @@ const STYLES = `
   transition: opacity 0.12s;
   flex-shrink: 0;
 }
-.notes-tree-row:hover .notes-tree-actions { opacity: 1; }
+.notes-tree-row:hover .notes-tree-actions,
+.notes-tree-actions.menu-open { opacity: 1; }
 
 .notes-tree-action {
   width: 18px; height: 18px;
@@ -212,10 +226,8 @@ const STYLES = `
 
 /* Context menu */
 .notes-ctx-menu {
-  position: absolute;
-  right: 4px;
-  top: 100%;
-  z-index: 100;
+  position: fixed;
+  z-index: 1000;
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -324,22 +336,45 @@ const STYLES = `
 }
 .notes-note-title-input::placeholder { color: var(--text-muted); }
 
-.notes-scratch-toggle {
-  padding: 4px 10px;
-  border-radius: 6px;
+.notes-pane-toggles {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+.notes-pane-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
   border: 1px solid var(--border);
   background: var(--surface2);
   color: var(--text-muted);
   cursor: pointer;
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   font-weight: 600;
-  transition: all 0.12s;
   font-family: inherit;
   white-space: nowrap;
+  transition: all 0.15s;
+  user-select: none;
 }
-.notes-scratch-toggle:hover {
+.notes-pane-pill:hover { border-color: var(--accent); color: var(--text); }
+.notes-pane-pill.active {
+  background: rgba(124,92,252,0.15);
   border-color: var(--accent);
-  color: var(--text);
+  color: var(--accent-light);
+}
+.notes-pill-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: background 0.15s;
+}
+.notes-pane-pill.active .notes-pill-dot {
+  background: var(--accent-light);
+  box-shadow: 0 0 6px rgba(124,92,252,0.5);
 }
 
 .notes-editor-body {
@@ -407,6 +442,19 @@ const STYLES = `
   color: var(--text-muted);
   border-top: 1px solid var(--border);
 }
+.notes-code-lang {
+  padding: 2px 6px;
+  font-size: 0.62rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+}
+.notes-code-lang:hover { border-color: var(--accent); }
+.notes-code-pane .cm-editor { height: 100%; }
+.notes-code-pane .cm-scroller { overflow: auto; }
 `;
 
 function formatTimestamp(value) {
@@ -416,14 +464,15 @@ function formatTimestamp(value) {
   return `Updated ${d.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}`;
 }
 
-export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdateNote, onDeleteNote }) {
+export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdateNote, onDeleteNote, prefs = {}, onPrefsChange }) {
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [expandedFolders, setExpandedFolders] = useState(() => new Set());
-  const [showRough, setShowRough] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [sidebarWidth, setSidebarWidth] = useState(240);
+  const [showCode, setShowCode] = useState(prefs.showCode ?? false);
+  const [showPreview, setShowPreview] = useState(prefs.showPreview ?? false);
+  const [sidebarOpen, setSidebarOpen] = useState(prefs.sidebarOpen ?? true);
+  const [sidebarWidth, setSidebarWidth] = useState(prefs.sidebarWidth ?? 240);
   const [isResizing, setIsResizing] = useState(false);
-  const [contextMenu, setContextMenu] = useState(null);
+  const [contextMenu, setContextMenu] = useState(null); // { id, x, y } or null
   const [editingId, setEditingId] = useState(null);
   const [draftTitle, setDraftTitle] = useState('');
   const [dragId, setDragId] = useState(null);
@@ -432,6 +481,11 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
   const treeInputRef = useRef(null);
   const titleInputRef = useRef(null);
   const prevIdsRef = useRef(new Set());
+
+  // Persist toggle/sidebar changes to prefs
+  const persistPrefs = useCallback((patch) => {
+    onPrefsChange?.(patch);
+  }, [onPrefsChange]);
 
   // Derived
   const itemsById = useMemo(() => Object.fromEntries(notes.map(n => [n.id, n])), [notes]);
@@ -442,6 +496,10 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
       const key = item.parentId ?? null;
       if (!map.has(key)) map.set(key, []);
       map.get(key).push(item);
+    }
+    // Sort children by sortOrder (fallback to createdAt for legacy items)
+    for (const [, children] of map) {
+      children.sort((a, b) => (a.sortOrder ?? Infinity) - (b.sortOrder ?? Infinity) || (a.createdAt || '').localeCompare(b.createdAt || ''));
     }
     return map;
   }, [notes]);
@@ -500,9 +558,17 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
   // ── Close context menu on outside click ──
   useEffect(() => {
     if (!contextMenu) return;
-    const handler = () => setContextMenu(null);
-    document.addEventListener('click', handler);
-    return () => document.removeEventListener('click', handler);
+    const handler = (e) => {
+      if (e.target.closest('.notes-ctx-menu')) return;
+      setContextMenu(null);
+    };
+    const id = requestAnimationFrame(() => {
+      document.addEventListener('mousedown', handler);
+    });
+    return () => {
+      cancelAnimationFrame(id);
+      document.removeEventListener('mousedown', handler);
+    };
   }, [contextMenu]);
 
   // ── Sidebar resize ──
@@ -517,12 +583,15 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
     };
     const onUp = () => {
       setIsResizing(false);
+      // Persist final width
+      const el = document.querySelector('.notes-sidebar');
+      if (el) persistPrefs({ sidebarWidth: parseInt(el.style.width) || sidebarWidth });
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseup', onUp);
     };
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
-  }, [sidebarWidth]);
+  }, [sidebarWidth, persistPrefs]);
 
   // ── Drag helpers ──
   const getDescendantIds = useCallback((id) => {
@@ -568,14 +637,26 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
     if (descendants.has(targetId)) return;
 
     if (position === 'inside' && target.type === 'folder') {
-      // Move into folder
-      onUpdateNote?.({ ...source, parentId: target.id, updatedAt: new Date().toISOString() });
+      // Move into folder — append at end
+      const siblings = childMap.get(target.id) || [];
+      const maxOrder = siblings.reduce((m, s) => Math.max(m, s.sortOrder ?? 0), 0);
+      onUpdateNote?.({ ...source, parentId: target.id, sortOrder: maxOrder + 1, updatedAt: new Date().toISOString() });
       setExpandedFolders(s => { const n = new Set(s); n.add(target.id); return n; });
     } else {
-      // Move to same parent as target, reorder by updating parentId
-      onUpdateNote?.({ ...source, parentId: target.parentId ?? null, updatedAt: new Date().toISOString() });
+      // Move before or after target — reorder siblings
+      const newParentId = target.parentId ?? null;
+      const siblings = (childMap.get(newParentId) || []).filter(s => s.id !== sourceId);
+      const targetIdx = siblings.findIndex(s => s.id === targetId);
+      const insertIdx = position === 'before' ? targetIdx : targetIdx + 1;
+      siblings.splice(insertIdx, 0, source);
+      // Reassign sortOrder for all siblings
+      const now = new Date().toISOString();
+      siblings.forEach((s, i) => {
+        const updated = { ...s, parentId: newParentId, sortOrder: i, updatedAt: now };
+        onUpdateNote?.(updated);
+      });
     }
-  }, [dragId, itemsById, getDescendantIds, onUpdateNote]);
+  }, [dragId, itemsById, childMap, getDescendantIds, onUpdateNote]);
 
   const handleDragEnd = useCallback(() => {
     setDragId(null);
@@ -645,24 +726,16 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
               )}
             </div>
 
-            <div className="notes-tree-actions">
+            <div className={`notes-tree-actions${contextMenu?.id === item.id ? ' menu-open' : ''}`}>
               <button type="button" className="notes-tree-action" onClick={(e) => {
                 e.stopPropagation();
-                setContextMenu(prev => prev === item.id ? null : item.id);
+                if (contextMenu?.id === item.id) {
+                  setContextMenu(null);
+                } else {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  setContextMenu({ id: item.id, x: rect.right, y: rect.bottom + 2 });
+                }
               }} title="Actions">⋯</button>
-              {contextMenu === item.id && (
-                <div className="notes-ctx-menu" onClick={e => e.stopPropagation()}>
-                  {isFolder && (
-                    <>
-                      <button className="notes-ctx-item" onClick={() => { onAddNote?.(item.id); setContextMenu(null); }}>📄 Add Note</button>
-                      <button className="notes-ctx-item" onClick={() => { onAddFolder?.(item.id); setContextMenu(null); }}>📁 Add Folder</button>
-                      <div className="notes-ctx-sep" />
-                    </>
-                  )}
-                  <button className="notes-ctx-item" onClick={() => { setEditingId(item.id); setDraftTitle(item.title || ''); setContextMenu(null); }}>✏️ Rename</button>
-                  <button className="notes-ctx-item delete" onClick={() => { onDeleteNote?.(item.id); setContextMenu(null); }}>✕ Delete</button>
-                </div>
-              )}
             </div>
           </div>
 
@@ -684,7 +757,7 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
         </div>
       );
     });
-  }, [childMap, expandedFolders, editingId, selectedNoteId, dragId, dragOverId, dropPosition, draftTitle, commitRename, handleDragStart, handleDragEnd, handleDragOver, handleDragLeave, handleDrop, onAddNote, onAddFolder, onDeleteNote]);
+  }, [childMap, expandedFolders, editingId, selectedNoteId, dragId, dragOverId, dropPosition, draftTitle, contextMenu, commitRename, handleDragStart, handleDragEnd, handleDragOver, handleDragLeave, handleDrop, onAddNote, onAddFolder, onDeleteNote]);
 
   // ── Empty state ──
   if (!notes.length) {
@@ -708,6 +781,26 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
   return (
     <div className="notes-view">
       <style>{STYLES}</style>
+
+      {/* Context menu rendered at top level to avoid overflow clipping */}
+      {contextMenu && (() => {
+        const item = notes.find(n => n.id === contextMenu.id);
+        if (!item) return null;
+        const isFolder = item.type === 'folder';
+        return (
+          <div className="notes-ctx-menu" style={{ position: 'fixed', left: contextMenu.x, top: contextMenu.y, right: 'auto' }} onClick={e => e.stopPropagation()}>
+            {isFolder && (
+              <>
+                <button className="notes-ctx-item" onClick={() => { onAddNote?.(item.id); setContextMenu(null); }}>📄 Add Note</button>
+                <button className="notes-ctx-item" onClick={() => { onAddFolder?.(item.id); setContextMenu(null); }}>📁 Add Folder</button>
+                <div className="notes-ctx-sep" />
+              </>
+            )}
+            <button className="notes-ctx-item" onClick={() => { setEditingId(item.id); setDraftTitle(item.title || ''); setContextMenu(null); }}>✏️ Rename</button>
+            <button className="notes-ctx-item delete" onClick={() => { onDeleteNote?.(item.id); setContextMenu(null); }}>✕ Delete</button>
+          </div>
+        );
+      })()}
 
       {/* Sidebar */}
       <aside className={`notes-sidebar${sidebarOpen ? '' : ' collapsed'}`} style={sidebarOpen ? { width: sidebarWidth, minWidth: sidebarWidth } : undefined}>
@@ -738,7 +831,7 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
       <section className="notes-editor">
         {/* Top bar with sidebar toggle + title */}
         <div className="notes-editor-bar">
-          <button type="button" className="notes-sidebar-toggle" onClick={() => setSidebarOpen(s => !s)} title={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}>
+          <button type="button" className="notes-sidebar-toggle" onClick={() => { setSidebarOpen(s => { const v = !s; persistPrefs({ sidebarOpen: v }); return v; }); }} title={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}>
             {sidebarOpen ? '◀' : '▶'}
           </button>
           {selectedNote ? (
@@ -750,9 +843,14 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
                 onChange={e => handleUpdateField('title', e.target.value)}
                 placeholder="Untitled note"
               />
-              <button type="button" className="notes-scratch-toggle" onClick={() => setShowRough(s => !s)}>
-                {showRough ? 'Hide Scratch' : 'Show Scratch'}
-              </button>
+              <div className="notes-pane-toggles">
+                <button type="button" className={`notes-pane-pill${showPreview ? ' active' : ''}`} onClick={() => { setShowPreview(s => { const v = !s; persistPrefs({ showPreview: v }); return v; }); }}>
+                  <span className="notes-pill-dot" />Preview
+                </button>
+                <button type="button" className={`notes-pane-pill${showCode ? ' active' : ''}`} onClick={() => { setShowCode(s => { const v = !s; persistPrefs({ showCode: v }); return v; }); }}>
+                  <span className="notes-pill-dot" />Code
+                </button>
+              </div>
             </>
           ) : (
             <span style={{ flex: 1, color: 'var(--text-muted)', fontSize: '0.82rem' }}>Select a note</span>
@@ -770,28 +868,60 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
           <>
             <div className="notes-editor-body">
               {/* Note pane */}
-              <div className="notes-pane note-pane" style={{ flex: showRough ? '7 0 0' : '1 0 0' }}>
+              <div className="notes-pane note-pane" style={{ flex: (showPreview || showCode) ? '5 0 0' : '1 0 0' }}>
                 <div className="notes-pane-label"><span>📝 Note</span></div>
                 <MarkdownEditor
                   value={selectedNote.content || ''}
                   onChange={v => handleUpdateField('content', v)}
                   placeholder="# Start writing...\n\nUse **bold**, _italic_, [links](url), \`code\`, ```code blocks```, and more"
+                  livePreview={showPreview}
                 />
               </div>
 
-              {/* Scratch pane */}
-              {showRough && (
-                <div className="notes-pane" style={{ flex: '3 0 0' }}>
+              {/* Live preview pane */}
+              {showPreview && (
+                <div className="notes-pane" style={{ flex: '5 0 0', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
                   <div className="notes-pane-label">
-                    <span>🗒️ Scratch</span>
-                    <button type="button" className="notes-pane-close" onClick={() => setShowRough(false)}>✕</button>
+                    <span>👁️ Preview</span>
+                    <button type="button" className="notes-pane-close" onClick={() => setShowPreview(false)}>✕</button>
                   </div>
-                  <MarkdownEditor
-                    value={selectedNote.rough || ''}
-                    onChange={v => handleUpdateField('rough', v)}
-                    placeholder="Brain dump, snippets, throwaway thoughts..."
-                    label="🗒️ Scratch Pad"
+                  <div
+                    className="md-preview"
+                    style={{ flex: 1, overflowY: 'auto', padding: '14px 16px' }}
+                    dangerouslySetInnerHTML={{ __html: renderMarkdown(selectedNote.content || '') }}
                   />
+                </div>
+              )}
+
+              {/* Code pane */}
+              {showCode && (
+                <div className="notes-pane notes-code-pane" style={{ flex: '4 0 0', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                  <div className="notes-pane-label">
+                    <span>💻 Code</span>
+                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                      <select
+                        className="notes-code-lang"
+                        value={selectedNote.codeLanguage || 'javascript'}
+                        onChange={e => handleUpdateField('codeLanguage', e.target.value)}
+                      >
+                        {Object.entries(LANGS).map(([key, { label }]) => (
+                          <option key={key} value={key}>{label}</option>
+                        ))}
+                      </select>
+                      <button type="button" className="notes-pane-close" onClick={() => setShowCode(false)}>✕</button>
+                    </div>
+                  </div>
+                  <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+                    <CodeMirror
+                      value={selectedNote.code || ''}
+                      onChange={v => handleUpdateField('code', v)}
+                      theme={tokyoNight}
+                      extensions={[LANGS[selectedNote.codeLanguage || 'javascript']?.ext() || javascript()]}
+                      height="100%"
+                      style={{ height: '100%' }}
+                      basicSetup={{ lineNumbers: true, foldGutter: true, bracketMatching: true, autocompletion: true }}
+                    />
+                  </div>
                 </div>
               )}
             </div>
