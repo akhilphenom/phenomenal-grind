@@ -17816,24 +17816,13 @@
       "title": "Index",
       "parentId": "folder-1780237179081",
       "type": "note",
-      "content": "## **Topics**\n1. Number Theory\n2. Binary Search\n3. Master DFS\n4. \n",
+      "content": "## **Topics**\n1. Number Theory\n2. Binary Search\n3. DFS\n4. Master DFS\n5. BFS\n6. Topological\n7. Tree Diameter\n8. LCA\n9. Binary Lifting\n10. Dynamic Programming\n11. DP on Trees & DAG\n12. Digit DP\n13. Bitmask DP\n14. Bit Manipulation\n15. Fenwick Tree\n16. Segment Tree\n\n\n1. Constructive Algorithms\n2. Greedy Algorithms\n3. CSES Problem set\n",
       "rough": "",
       "createdAt": "2026-05-31T14:33:04.917Z",
-      "updatedAt": "2026-05-31T17:58:50.014Z",
+      "updatedAt": "2026-05-31T18:16:26.674Z",
       "sortOrder": 0,
       "code": "int main() {\n  \n}",
       "codeLanguage": "cpp"
-    },
-    {
-      "id": "note-1780238003106",
-      "title": "z-index",
-      "parentId": "folder-1780237179081",
-      "type": "note",
-      "content": "",
-      "rough": "",
-      "createdAt": "2026-05-31T14:33:23.106Z",
-      "updatedAt": "2026-05-31T14:55:41.694Z",
-      "sortOrder": 2
     },
     {
       "id": "note-1780238017404",

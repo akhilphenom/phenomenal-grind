@@ -72,9 +72,16 @@ export function renderMarkdown(text) {
   // Blockquotes
   html = html.replace(/^&gt; (.+)$/gm, '<blockquote class="md-blockquote">$1</blockquote>');
 
-  // Line breaks
-  html = html.replace(/\n\n/g, '<br/><br/>');
+  // Paragraphs: double newline = paragraph break, single newline = line break
+  // But don't add extra spacing between consecutive list/block elements
+  html = html.replace(/\n\n/g, '</p><p>');
   html = html.replace(/\n/g, '<br/>');
+  html = '<p>' + html + '</p>';
+  // Clean up empty paragraphs and paragraphs wrapping block elements
+  html = html.replace(/<p><\/p>/g, '');
+  html = html.replace(/<p>(<div |<blockquote |<pre |<hr |<h[1-3] )/g, '$1');
+  html = html.replace(/(<\/div>|<\/blockquote>|<\/pre>|<\/h[1-3]>)<\/p>/g, '$1');
+  html = html.replace(/<p>(<hr[^>]*\/>)<\/p>/g, '$1');
 
   return html;
 }
@@ -263,6 +270,9 @@ const STYLES = `
   opacity: 0.5;
   font-style: italic;
 }
+.md-preview p { margin: 0 0 4px; }
+.md-preview .md-bullet, .md-preview .md-numbered { margin: 1px 0; }
+.md-preview .md-checkbox { margin: 1px 0; }
 
 .md-footer {
   display: flex;
@@ -325,17 +335,76 @@ export default function MarkdownEditor({ value, onChange, placeholder, label, li
 
   const handleKeyDown = useCallback((e) => {
     const el = e.target;
-    // Tab inserts 2 spaces
+    const text = el.value;
+    const start = el.selectionStart;
+
+    // Tab indents list items
     if (e.key === 'Tab') {
       e.preventDefault();
-      const start = el.selectionStart;
-      const end = el.selectionEnd;
-      const text = el.value;
-      const newText = text.slice(0, start) + '  ' + text.slice(end);
-      onChange(newText);
-      requestAnimationFrame(() => {
-        el.setSelectionRange(start + 2, start + 2);
-      });
+      const lineStart = text.lastIndexOf('\n', start - 1) + 1;
+      const line = text.slice(lineStart, start);
+
+      if (e.shiftKey) {
+        // Shift+Tab: remove leading 2 spaces
+        if (line.startsWith('  ')) {
+          const newText = text.slice(0, lineStart) + text.slice(lineStart + 2);
+          onChange(newText);
+          requestAnimationFrame(() => el.setSelectionRange(start - 2, start - 2));
+        }
+      } else {
+        // Tab: add 2 spaces at line start
+        const newText = text.slice(0, lineStart) + '  ' + text.slice(lineStart);
+        onChange(newText);
+        requestAnimationFrame(() => el.setSelectionRange(start + 2, start + 2));
+      }
+      return;
+    }
+
+    // Enter: auto-continue lists
+    if (e.key === 'Enter') {
+      const lineStart = text.lastIndexOf('\n', start - 1) + 1;
+      const line = text.slice(lineStart, start);
+
+      // Match list patterns: "  - ", "- [ ] ", "- [x] ", "- ", "  1. ", "1. "
+      const bulletMatch = line.match(/^(\s*)(- \[[ x]\] |- )(.*)/);
+      const numberMatch = line.match(/^(\s*)(\d+)\. (.*)/);
+
+      if (bulletMatch) {
+        const [, indent, prefix, content] = bulletMatch;
+        if (!content.trim()) {
+          // Empty bullet — remove it (double-enter clears)
+          e.preventDefault();
+          const newText = text.slice(0, lineStart) + '\n' + text.slice(start);
+          onChange(newText);
+          requestAnimationFrame(() => el.setSelectionRange(lineStart + 1, lineStart + 1));
+        } else {
+          // Continue with same prefix
+          e.preventDefault();
+          const continuation = `\n${indent}${prefix.startsWith('- [') ? '- [ ] ' : '- '}`;
+          const newText = text.slice(0, start) + continuation + text.slice(start);
+          onChange(newText);
+          const newPos = start + continuation.length;
+          requestAnimationFrame(() => el.setSelectionRange(newPos, newPos));
+        }
+      } else if (numberMatch) {
+        const [, indent, num, content] = numberMatch;
+        if (!content.trim()) {
+          // Empty number — remove it
+          e.preventDefault();
+          const newText = text.slice(0, lineStart) + '\n' + text.slice(start);
+          onChange(newText);
+          requestAnimationFrame(() => el.setSelectionRange(lineStart + 1, lineStart + 1));
+        } else {
+          // Continue with next number
+          e.preventDefault();
+          const nextNum = parseInt(num) + 1;
+          const continuation = `\n${indent}${nextNum}. `;
+          const newText = text.slice(0, start) + continuation + text.slice(start);
+          onChange(newText);
+          const newPos = start + continuation.length;
+          requestAnimationFrame(() => el.setSelectionRange(newPos, newPos));
+        }
+      }
     }
   }, [onChange]);
 
