@@ -17809,6 +17809,33 @@
         "learnings": "",
         "body": ""
       }
+    },
+    {
+      "id": "2026-06-01",
+      "competitive": {
+        "leetcode": {
+          "easy": 0,
+          "medium": 0,
+          "hard": 0,
+          "topics": [],
+          "notes": ""
+        },
+        "codeforces": {
+          "div4": 0,
+          "div3": 1,
+          "div2": 1,
+          "div1": 0,
+          "contestName": "",
+          "rank": "",
+          "notes": ""
+        },
+        "atcoder": {
+          "abc": 0,
+          "arc": 0,
+          "agc": 0,
+          "notes": ""
+        }
+      }
     }
   ],
   "$schema": "./node_modules/json-server/schema.json",
@@ -17850,15 +17877,49 @@
     },
     {
       "id": "note-1780238017404",
-      "title": "Number Theory",
-      "parentId": "folder-1780237179081",
+      "title": "Prime",
+      "parentId": "folder-1780305440965",
       "type": "note",
       "content": "Prime number: \n1, itself\n\nAny number can be represented as product of prime numbers\nPrime Factorization = p1^a1 x p2^a2 + ... x pn^an\n\nNumber of factors = Combinotrics\n(a1+1)x(a2+1)...x(an+1)\n\nSum of factors:\n6 = 2^1 x 3^1\n00, 01, 10, 11\n1, 3, 2, 6 => + => 12\nGeometric Progression for \nn = 1 + n + n^2 + n^3 +...+n^k\nn = (n^(k+1) - 1) / (n - 1)\n6 -> GP (2) x GP (3)\n((2^(1+1) - 1) / 2 - 1) x (3^2 - 1)/(3-1)\n3 x 4 = 12\n\nProduct of factors:\n6\n1 3 2 6\nor\n1 2 | 3 6\n1x6 x 2x3\n6x6\n6^2 => 6^(sum of factors) / 2 => 6^(4/2)\n\nPerfect Numbers:\nsum of its proper divisors (except itself) == number itself\n6 = 1 + 2 + 3\nsum of factors - number == number\n\n\nDensity of primes:\nnumber of primes available < n ~= n/logn\n\nConjecture: any even number can be sum of 2 primes (verified till 4x10^18)\nTwin prime Conjecture: adjacent primes with diff < 2 are infinite\nProved till 10^18 that between n^2 and (n+1)^2 there exists a prime number\n",
       "rough": "",
       "createdAt": "2026-05-31T14:33:37.404Z",
-      "updatedAt": "2026-05-31T19:13:36.815Z",
-      "sortOrder": 2,
+      "updatedAt": "2026-06-01T09:17:42.592Z",
+      "sortOrder": 1,
       "code": "// Check Prime\nbool isPrime (int n) {\n  if(n<2) {\n    return false;\n  }\n  for(int i = 2; i*i<=n; i++) {\n    if(n%i == 0) return false;\n  }\n  return true;\n}\n\n// Prime Factorization\nvector<int> primeFactorization (int n) {\n  vector<int> factors;\n  for(int i=2; i*i<=n; i++) {\n    while(n%i == 0) {\n      factors.push_back(i);\n      n/=i;\n    }\n  }\n  if(n>1) {\n    factors.push_back(n);\n  }\n  return factors;\n}\n\n\n",
+      "codeLanguage": "cpp"
+    },
+    {
+      "id": "folder-1780305440965",
+      "title": "Number Theory",
+      "parentId": null,
+      "type": "folder",
+      "content": "",
+      "rough": "",
+      "createdAt": "2026-06-01T09:17:20.966Z",
+      "updatedAt": "2026-06-01T09:17:26.002Z"
+    },
+    {
+      "id": "note-1780305466108",
+      "title": "Sieve of Eratosthenes",
+      "parentId": "folder-1780305440965",
+      "type": "note",
+      "content": "12 =  1 2 3 6 12",
+      "rough": "",
+      "createdAt": "2026-06-01T09:17:46.108Z",
+      "updatedAt": "2026-06-01T09:51:19.526Z",
+      "code": "// Basic \nvector<int> isPrime(int n) {\n  vector<int> isPrime = new vector<int>(n+1, true);\n  isPrime[0] = isPrime[1] = 0;\n  for(int i = 2; i <= n; i++) {\n    if(isPrime[i]) {\n      for(int j=2*i; j<=n; j+=i) {\n        isPrime[j] = 0;\n      }\n    }\n  }\n  return isPrime;\n}\n\n// Optimized\nvector<int> isPrime(int n) {\n  vector<int> isPrime = new vector<int>(n+1, true);\n  isPrime[0] = isPrime[1] = 0;\n  for(int i = 2; i <= n; i++) {\n    if(isPrime[i]) {\n      for(int j=i*i; j<=n; j+=i) {\n        isPrime[j] = 0;\n      }\n    }\n  }\n  return isPrime;\n}\n\n// Operations optimized 50%\nvector<int> isPrime(int n) {\n  vector<int> isPrime = new vector<int>(n+1, true);\n  isPrime[0] = isPrime[1] = 0;\n  for(int i = 2; i*i <= n; i++) {\n    if(isPrime[i]) {\n      for(int j=i*i; j<=n; j+=i) {\n        isPrime[j] = 0;\n      }\n    }\n  }\n  return isPrime;\n}\n\n// odd only sieve\nvector<int> isPrime(int n) {\n  vector<int> isPrime = new vector<int>(n+1, true);\n  isPrime[0] = isPrime[1] = 0;\n  for(int i=4; i<=n; i+=2) {\n    sieve[i] = 0;\n  }\n  for(int i = 3; i*i <= n; i += 2) {\n    if(isPrime[i]) {\n      for(int j=i*i; j<=n; j += 2*i) {\n        isPrime[j] = 0;\n      }\n    }\n  }\n  return isPrime;\n}\n",
+      "codeLanguage": "cpp"
+    },
+    {
+      "id": "note-1780306367940",
+      "title": "Enhanced Sieve of Eratosthenes",
+      "parentId": "folder-1780305440965",
+      "type": "note",
+      "content": "Instead of boolean, maybe store values?\n\nTo find prime factorization of n = n^(1/2)\nLets store smallest prime factor instead of bool\n\nFactorize k = 12\n\nsieve\n0 1 2 3 4 5 6 7 8 9 10 11 12\n0 0 1 1 0 1 0 1 0 0  0  1  0\n0 0 2 3 2 5 2 7 2 3  2 11  2\n\nn = 12\ns[12] = 2 -> factors = [2]\n\nn = 12/2 = 6\ns[6] = 2 -> factors = [2, 2]\n\nn = 6/2 = 3\ns[3] = 3 -> factors = [2, 2, 3]\n\nn = 3/3 = 1\ns[1] = 0\n\n\nSum of Divisors:\nFor all numbers from 1 to n, compute sum of their divisors\n6 -> 1 2 3 6\n\n0 1 2 3 4 5 6\n0 0 0 0 0 0 0\n0 1 1 1 1 1 1\n0 1 3 1 3 1 3\n0 1 3 4 3 1 6\n0 1 3 4 7 1 6\n0 1 3 4 7 6 6\n\n\nBiggest Prime Divisor:\nUpdate with largest, instead of SPF\n",
+      "rough": "",
+      "createdAt": "2026-06-01T09:32:47.940Z",
+      "updatedAt": "2026-06-01T11:13:04.707Z",
+      "code": "vector<int> sieve (int n) {\n  vector<int> sieve(n+1, 0);\n  for(int i=2; i<=n; i++) {\n    if(sieve[i] != 0) {\n      continue;\n    }\n    for(int j=i; j<=n; j+=i) {\n      sieve[j] = i;\n    }\n  }\n  return sieve\n}\n\nvector<int> factorize(int n, vector<int> &sieve) {\n  vector<int> factors;\n  while(sieve[n]) {\n    factors.push_back(sieve[n]);\n    n /= sieve[n];\n  }\n  if(n>1) {\n    factors.push_back(n);\n  }\n  return factors;\n}\n\nvector<int> sumOfDivisors (int n) {\n  vector<int> sum(n+1, 0);\n  for(int i=1; i<=n; i++) {\n    for(int j=i; j<=n; j+=i) {\n      sum[j] += i;\n    }\n  }\n  return sum;\n}\n\nvector<int> biggestPrimeDivisor (int n) {\n  vector<int> big(n+1, 1);\n  for(int i=1; i<=n; i++) {\n    if(big[i] == 1) {\n      for(int j=i; j<=n; j+=i) {\n        big[j] = i;\n      }\n    }\n  }\n  return big;\n}",
       "codeLanguage": "cpp"
     }
   ],
@@ -17866,13 +17927,13 @@
     {
       "id": "user",
       "notes": {
-        "showPreview": true,
-        "showCode": false
+        "showPreview": false,
+        "showCode": true
       },
       "sidebar": {
         "collapsed": false
       },
-      "activeView": "notes"
+      "activeView": "routine"
     }
   ]
 }
