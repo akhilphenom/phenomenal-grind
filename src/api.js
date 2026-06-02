@@ -109,3 +109,31 @@ export async function savePreferences(prefs) {
   });
   return res.json();
 }
+
+// ─── Adhoc Problems ───
+export async function fetchAdhocProblems() {
+  const res = await fetch(`${API}/adhocProblems`);
+  return res.json();
+}
+
+export async function addAdhocProblem(problem) {
+  const res = await fetch(`${API}/adhocProblems`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(problem),
+  });
+  return res.json();
+}
+
+export async function updateAdhocProblem(problem) {
+  const res = await fetch(`${API}/adhocProblems/${problem.id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(problem),
+  });
+  return res.json();
+}
+
+export async function deleteAdhocProblem(id) {
+  await fetch(`${API}/adhocProblems/${id}`, { method: 'DELETE' });
+}

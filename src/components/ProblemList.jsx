@@ -475,7 +475,7 @@ function toggleInList(list, value) {
   return list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
 }
 
-export default function ProblemList({ problems = [], onUpdate, onOpenProblem }) {
+export default function ProblemList({ problems = [], onUpdate, onOpenProblem, hideHeader }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [search, setSearch] = useState('');
@@ -541,10 +541,12 @@ export default function ProblemList({ problems = [], onUpdate, onOpenProblem }) 
 
       <section className="pl-card pl-toolbar">
         <div className="pl-toolbar-top">
-          <div className="pl-heading">
-            <h2 className="pl-title">Problem Tracker</h2>
-            <p className="pl-subtitle">Track practice problems, filter by patterns, and jump back into any challenge fast.</p>
-          </div>
+          {!hideHeader && (
+            <div className="pl-heading">
+              <h2 className="pl-title">Problem Tracker</h2>
+              <p className="pl-subtitle">Track practice problems, filter by patterns, and jump back into any challenge fast.</p>
+            </div>
+          )}
           <div className="pl-toolbar-top">
             <span className="pl-count">{filteredProblems.length} of {problems.length} problems</span>
             <button

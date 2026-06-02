@@ -7,10 +7,13 @@ import SystemDesignView from './components/SystemDesignView';
 import RoutineView from './components/RoutineView';
 import ProblemList from './components/ProblemList';
 import ProblemDetail from './components/ProblemDetail';
+import AdhocView from './components/AdhocView';
 import NotesView from './components/NotesView';
 import {
   fetchProblems, updateProblem as apiUpdateProblem,
   addProblem as apiAddProblem, deleteProblem as apiDeleteProblem,
+  fetchAdhocProblems, addAdhocProblem as apiAddAdhocProblem,
+  updateAdhocProblem as apiUpdateAdhocProblem, deleteAdhocProblem as apiDeleteAdhocProblem,
   fetchAllDaily, saveDaily,
   fetchNotes, addNote as apiAddNote, updateNote as apiUpdateNote, deleteNote as apiDeleteNote,
   fetchPreferences, savePreferences,
@@ -28,6 +31,7 @@ const PAGE_TITLES = {
   dashboard: { title: 'Dashboard', sub: 'Your daily grind overview' },
   competitive: { title: 'Competitive Programming', sub: 'LeetCode • Codeforces • AtCoder' },
   problems: { title: 'Problem Tracker', sub: 'Track, solve & review coding problems' },
+  adhoc: { title: 'Adhoc Problems', sub: 'Daily practice problems — add, solve & review' },
   systemdesign: { title: 'System Design', sub: 'HLD • LLD • Core Concepts' },
   routine: { title: 'Daily Journal', sub: 'Reflect • Learn • Grow' },
   notes: { title: 'Notes', sub: 'Organize your knowledge — Obsidian style' },
@@ -38,8 +42,10 @@ export default function App() {
   const [date, setDate] = useState(todayKey);
   const [allData, setAllData] = useState({});
   const [problems, setProblems] = useState([]);
+  const [adhocProblems, setAdhocProblems] = useState([]);
   const [notes, setNotes] = useState([]);
   const [openProblem, setOpenProblem] = useState(null);
+  const [openAdhocProblem, setOpenAdhocProblem] = useState(null);
   const [loaded, setLoaded] = useState(false);
   const [prefs, setPrefs] = useState({});
   const saveTimer = useRef(null);
@@ -47,10 +53,11 @@ export default function App() {
 
   // Load all data from json-server on mount
   useEffect(() => {
-    Promise.all([fetchAllDaily(), fetchProblems(), fetchNotes(), fetchPreferences()])
-      .then(([daily, probs, notesData, prefsData]) => {
+    Promise.all([fetchAllDaily(), fetchProblems(), fetchAdhocProblems(), fetchNotes(), fetchPreferences()])
+      .then(([daily, probs, adhocProbs, notesData, prefsData]) => {
         setAllData(daily);
         setProblems(probs);
+        setAdhocProblems(adhocProbs);
         setNotes(notesData);
         if (prefsData.activeView) setActiveTab(prefsData.activeView);
         setPrefs(prefsData);
@@ -127,6 +134,39 @@ export default function App() {
       for (const p of prev) {
         if (!nextIds.has(p.id)) {
           apiDeleteProblem(p.id).catch((e) => console.error('Delete failed:', e));
+        }
+      }
+
+      return next;
+    });
+  }, []);
+
+  // Adhoc Problem CRUD
+  const handleUpdateAdhocProblem = useCallback((updated) => {
+    setAdhocProblems((prev) =>
+      prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p))
+    );
+    setOpenAdhocProblem((prev) => (prev && prev.id === updated.id ? { ...prev, ...updated } : prev));
+    apiUpdateAdhocProblem(updated).catch((e) => console.error('Adhoc update failed:', e));
+  }, []);
+
+  const handleSetAdhocProblems = useCallback((newProblemsOrUpdater) => {
+    setAdhocProblems((prev) => {
+      const next = typeof newProblemsOrUpdater === 'function'
+        ? newProblemsOrUpdater(prev)
+        : newProblemsOrUpdater;
+
+      const prevIds = new Set(prev.map((p) => p.id));
+      const nextIds = new Set(next.map((p) => p.id));
+
+      for (const p of next) {
+        if (!prevIds.has(p.id)) {
+          apiAddAdhocProblem(p).catch((e) => console.error('Adhoc add failed:', e));
+        }
+      }
+      for (const p of prev) {
+        if (!nextIds.has(p.id)) {
+          apiDeleteAdhocProblem(p.id).catch((e) => console.error('Adhoc delete failed:', e));
         }
       }
 
@@ -226,7 +266,8 @@ export default function App() {
 
   const info = PAGE_TITLES[activeTab];
   const showingProblemDetail = activeTab === 'problems' && openProblem;
-  const hideHeader = showingProblemDetail || activeTab === 'notes';
+  const showingAdhocDetail = activeTab === 'adhoc' && openAdhocProblem;
+  const hideHeader = showingProblemDetail || showingAdhocDetail || activeTab === 'adhoc' || activeTab === 'notes';
 
   if (!loaded) {
     return (
@@ -241,7 +282,7 @@ export default function App() {
 
   return (
     <div className="app-layout">
-      <Sidebar activeTab={activeTab} onTabChange={(tab) => { handleSetActiveTab(tab); setOpenProblem(null); }} streak={streak} />
+      <Sidebar activeTab={activeTab} onTabChange={(tab) => { handleSetActiveTab(tab); setOpenProblem(null); setOpenAdhocProblem(null); }} streak={streak} />
 
       <div className="content-area">
         {!hideHeader && (
@@ -250,11 +291,11 @@ export default function App() {
               <h1 className="page-title">{info.title}</h1>
               <p className="page-subtitle">{info.sub}</p>
             </div>
-            {activeTab !== 'problems' && <DateNav date={date} onDateChange={setDate} />}
+            {activeTab !== 'problems' && activeTab !== 'adhoc' && <DateNav date={date} onDateChange={setDate} />}
           </header>
         )}
 
-        <main className={`page-content${showingProblemDetail || activeTab === 'notes' ? ' full-height' : ''}`}>
+        <main className={`page-content${showingProblemDetail || showingAdhocDetail || activeTab === 'adhoc' || activeTab === 'notes' ? ' full-height' : ''}`}>
           {activeTab === 'dashboard' && (
             <DashboardView
               allData={allData}
@@ -280,6 +321,16 @@ export default function App() {
               problem={openProblem}
               onUpdate={handleUpdateProblem}
               onBack={() => setOpenProblem(null)}
+            />
+          )}
+          {activeTab === 'adhoc' && (
+            <AdhocView
+              problems={adhocProblems}
+              onUpdate={handleSetAdhocProblems}
+              onUpdateProblem={handleUpdateAdhocProblem}
+              onOpenProblem={setOpenAdhocProblem}
+              openProblem={openAdhocProblem}
+              onBack={() => setOpenAdhocProblem(null)}
             />
           )}
           {activeTab === 'systemdesign' && (

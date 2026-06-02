@@ -4,6 +4,7 @@ const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: '⊞' },
   { id: 'competitive', label: 'Competitive', icon: '⟨/⟩' },
   { id: 'problems', label: 'Problems', icon: '📋' },
+  { id: 'adhoc', label: 'Adhoc Problems', icon: '🎯' },
   { id: 'systemdesign', label: 'System Design', icon: '⚙' },
   { id: 'routine', label: 'Journal', icon: '📓' },
   { id: 'notes', label: 'Notes', icon: '🗒️' },
