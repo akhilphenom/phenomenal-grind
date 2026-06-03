@@ -187,7 +187,7 @@ const DASHBOARD_STYLES = `
 
 .heatmap-y-axis {
   display: grid;
-  grid-template-rows: repeat(7, 1fr);
+  grid-template-rows: repeat(7, 13px);
   gap: 3px;
 }
 
@@ -196,6 +196,7 @@ const DASHBOARD_STYLES = `
   color: var(--text-muted);
   display: flex;
   align-items: center;
+  height: 13px;
 }
 
 .heatmap-grid {
@@ -206,13 +207,13 @@ const DASHBOARD_STYLES = `
 
 .heatmap-week {
   display: grid;
-  grid-template-rows: repeat(7, 1fr);
+  grid-template-rows: repeat(7, 13px);
   gap: 3px;
 }
 
 .heatmap-cell {
-  aspect-ratio: 1;
-  width: 100%;
+  width: 13px;
+  height: 13px;
   border-radius: 2px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   transition: transform 0.15s ease, border-color 0.15s ease;
