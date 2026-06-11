@@ -20,14 +20,14 @@
       "title": "Count Inaccurate Results",
       "link": "https://www.fastprep.io/problems/amazon-count-processes-giving-inaccurate-results",
       "difficulty": "Easy",
-      "status": "Not Attempted",
+      "status": "Solved",
       "tags": [
         "Amazon",
         "2024-oa"
       ],
-      "code": "",
+      "code": "class Solution {\npublic:\n  int countInaccurateResults(vector<int> processOrder, vector<int> executionOrder) {\n    int i=0, j=0;\n    int count = 0;\n    int n = processOrder.size();\n    while(j<n) {\n      if(processOrder[i] != processOrder[j]) {\n        count++;\n        j++;\n      } else {\n        i++;\n        j++;\n      }\n    }\n    return count;\n  }\n};",
       "notes": "",
-      "language": "javascript",
+      "language": "cpp",
       "createdAt": "2024-10-01T00:00:00.000Z"
     },
     {
@@ -50,14 +50,14 @@
       "title": "Cleanup Dataset",
       "link": "https://www.fastprep.io/problems/amazon-cleanup-dataset",
       "difficulty": "Medium",
-      "status": "Not Attempted",
+      "status": "Solved",
       "tags": [
         "Amazon",
         "2024-oa"
       ],
-      "code": "",
-      "notes": "",
-      "language": "javascript",
+      "code": "class Solution {\npublic:\n  int cleanupDataset(string dataset, int x, int y) {\n    int ans = 0;\n    int n = dataset.size();\n    vector<int>f(26, 0);\n    \n    for(auto c: dataset) {\n      f[c-'a']++;\n    }\n    \n    if(x <= y) {\n      int evens = 0, odds = 0;\n      for(auto num: f) {\n        evens += num/2;\n      }\n      odds = n/2 - evens;\n      return x*evens + y*odds;\n    } else {\n      int mx = *max_element(f.begin(), f.end());\n      if(mx > n/2) {\n        int excessSamePairs = mx - n/2;\n        int differentPairs = (n/2) - excessSamePairs;\n        return excessSamePairs*x + differentPairs*y;\n      }\n      return (n/2)*y;\n    }\n    \n  }\n};",
+      "notes": "greedy",
+      "language": "cpp",
       "createdAt": "2024-10-01T00:00:00.000Z"
     },
     {
@@ -110,14 +110,14 @@
       "title": "Make All Elements Distinct",
       "link": "https://www.fastprep.io/problems/amazon-make-all-elements-distinct",
       "difficulty": "Medium",
-      "status": "Not Attempted",
+      "status": "Solved",
       "tags": [
         "Amazon",
         "2024-oa"
       ],
-      "code": "",
-      "notes": "",
-      "language": "javascript",
+      "code": "#include <bits/stdc++.h>\n\nclass Solution {\npublic:\n  int makeAllElementsDistinct(int n, vector<int> identifier) {\n    int idx = 0;\n    unordered_map<int,int>mp;\n    for(auto it: identifier) {\n      mp[it]++;\n    }\n    for(int i=0; i<n; i++) {\n      int num = identifier[i];\n      if(mp[num]>1) {\n        idx = i;\n      }\n      mp[num]--;\n    }\n    return idx+1;\n  }\n};",
+      "notes": "we can also do binary search on index",
+      "language": "cpp",
       "createdAt": "2024-10-01T00:00:00.000Z"
     },
     {
@@ -18020,7 +18020,7 @@
   "preferences": [
     {
       "id": "user",
-      "activeView": "notes"
+      "activeView": "problems"
     }
   ],
   "adhocProblems": [
