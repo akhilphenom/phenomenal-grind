@@ -491,9 +491,11 @@ export default function NotesView({ notes = [], onAddNote, onAddFolder, onUpdate
   const itemsById = useMemo(() => Object.fromEntries(notes.map(n => [n.id, n])), [notes]);
 
   const childMap = useMemo(() => {
+    const ids = new Set(notes.map(n => n.id));
     const map = new Map();
     for (const item of notes) {
-      const key = item.parentId ?? null;
+      // Treat items with missing parents as root-level (orphan recovery)
+      const key = (item.parentId && ids.has(item.parentId)) ? item.parentId : null;
       if (!map.has(key)) map.set(key, []);
       map.get(key).push(item);
     }
