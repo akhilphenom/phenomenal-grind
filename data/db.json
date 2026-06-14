@@ -17933,6 +17933,18 @@
         "learnings": "",
         "body": "- https://leetcode.com/problems/super-pow/description/\n- https://codeforces.com/contest/1717/problem/E%C3%A2%C2%81%C2%A3\n- "
       }
+    },
+    {
+      "id": "2026-06-15",
+      "routine": {
+        "mood": "",
+        "tags": [],
+        "highlights": "",
+        "lowlights": "",
+        "gratitude": "",
+        "learnings": "",
+        "body": "- https://cses.fi/problemset/task/1071\n- "
+      }
     }
   ],
   "$schema": "./node_modules/json-server/schema.json",
@@ -18104,6 +18116,46 @@
       "rough": "",
       "createdAt": "2026-06-14T15:57:20.863Z",
       "updatedAt": "2026-06-14T16:03:41.704Z"
+    },
+    {
+      "id": "folder-1781464081551",
+      "title": "Constructive Algorithms",
+      "parentId": null,
+      "type": "folder",
+      "content": "",
+      "rough": "",
+      "createdAt": "2026-06-14T19:08:01.551Z",
+      "updatedAt": "2026-06-14T19:08:07.377Z"
+    },
+    {
+      "id": "note-1781464090408",
+      "title": "Index",
+      "parentId": "folder-1781464081551",
+      "type": "note",
+      "content": "- Start small\n- Observe patterns and make reasonable guesses\n- ",
+      "rough": "",
+      "createdAt": "2026-06-14T19:08:10.408Z",
+      "updatedAt": "2026-06-14T19:44:04.529Z"
+    },
+    {
+      "id": "folder-1781464729767",
+      "title": "Resources",
+      "parentId": "folder-1780237164845",
+      "type": "folder",
+      "content": "",
+      "rough": "",
+      "createdAt": "2026-06-14T19:18:49.767Z",
+      "updatedAt": "2026-06-14T19:18:52.513Z"
+    },
+    {
+      "id": "note-1781464735078",
+      "title": "Index",
+      "parentId": "folder-1781464729767",
+      "type": "note",
+      "content": "CP Sheet: \nhttps://coding75.com/dsa-cp/sheets/expert-sheet\nhttps://codeforces.com/blog/entry/103141\nhttps://youkn0wwho.academy/topic-list\nhttps://pclub.in/roadmap/2024/07/21/cp-roadmap/\n",
+      "rough": "",
+      "createdAt": "2026-06-14T19:18:55.078Z",
+      "updatedAt": "2026-06-14T19:37:41.557Z"
     }
   ],
   "preferences": [
@@ -18117,6 +18169,54 @@
     }
   ],
   "adhocProblems": [
+    {
+      "id": "7f012a81-262e-44fb-bd93-1bc583c84690",
+      "title": "Permutations",
+      "link": "https://cses.fi/problemset/task/1070/",
+      "difficulty": "Medium",
+      "status": "Solved",
+      "tags": [],
+      "code": "",
+      "notes": "",
+      "language": "javascript",
+      "createdAt": "2026-06-14T19:52:04.678Z"
+    },
+    {
+      "id": "6ec27f4a-e0ca-4a42-982e-5ffa395cf2d6",
+      "title": "Mathematically Hard [Phi][Sieve]",
+      "link": "https://lightoj.com/problem/mathematically-hard",
+      "difficulty": "Medium",
+      "status": "Solved",
+      "tags": [],
+      "code": "#include <bits/stdc++.h>\n\n#define MAX 5000000\n\ntypedef unsigned long long ull;\nusing namespace std;\n\nvector<int> preCompute () {\n    vector<int> sieve(MAX+1);\n    for(int i=0; i<=MAX; i++) {\n        sieve[i] = i;\n    }\n    \n    for(int p=2; p<=MAX; p++) {\n        if(sieve[p] == p) {\n            sieve[p] = p-1; // phi(p) = p-1 if p is prime\n            for(int k=2*p; k<=MAX; k+=p) { //multiples are 2p,3p,...p^(k-1)p for 1..p^k\n                sieve[k] = (sieve[k]/p) * (p-1);\n            }\n        }\n    }\n    return sieve;\n}\n\nvector<ull> getPrefix(vector<int> &sieve) {\n    vector<ull>prefix(MAX+1, 0);\n    for(int i=1; i<=MAX; i++) {\n        prefix[i] = prefix[i-1] + (ull)sieve[i]*sieve[i];\n    }\n    return prefix;\n}\n\nint main() {\n    int t, a, b;\n    ull sum;\n    cin>>t;\n    vector<int> sieve = preCompute();\n    vector<ull> prefix = getPrefix(sieve);\n    for(int i=1; i<=t; i++) {\n        cin>>a>>b;\n        sum = prefix[b] - prefix[a-1];\n        cout<<\"Case \"+to_string(i)+\": \"+to_string(sum)<<endl;\n    }\n    \n    return 0;\n}\n",
+      "notes": "",
+      "language": "cpp",
+      "createdAt": "2026-06-02T09:45:17.086Z"
+    },
+    {
+      "id": "59422eb4-a0a9-4cfa-bd66-55a39ae55154",
+      "title": "Product 1 modulo N",
+      "link": "https://codeforces.com/problemset/problem/1514/C%C3%A2%C2%81%C2%A3",
+      "difficulty": "Medium",
+      "status": "Attempted",
+      "tags": [],
+      "code": "#include <bits/stdc++.h>\n#define MAX 100000\n\ntypedef unsigned long long ull;\nusing namespace std;\n\nvector<int> getCoprimes (int n) {\n    vector<int> coprimes;\n    for(int i=1; i<n; i++) {\n        if(gcd(i,n)==1) {\n            coprimes.push_back(i);\n        }\n    }\n    return coprimes;\n}\n\nvector<int> getList(vector<int> &coprimes, int n) {\n    vector<int>result;\n    ull product = 1;\n\n    for(auto c: coprimes) {\n        product = (product*c)%n;\n    }\n\n    if(product%n == 1) {\n        result = coprimes;\n    } else {\n        for(auto c: coprimes) {\n            if(c != n-1) {\n                result.push_back(c);\n            }\n        }\n    }\n    return result;\n}\n\nint main()\n{\n    int n;\n    cin>>n;\n    vector<int> coprimes = getCoprimes(n);\n    vector<int> result = getList(coprimes, n);\n    cout<<result.size()<<endl;\n    for(auto num: result) {\n        cout<<num<<\" \";\n    }\n    return 0;\n}",
+      "notes": "gcd(a,m) = 1\n\nthen \n\na^phi(m) = 1 (mod m)\nm = n here\n\nphi(p) = p - 1 if p is prime\n\nso nearest prime to n will have highest value: phi(nearest prime to n)\n\nn=8\n1...n-1\n\n4\n1 3 5 7\n\n\n1 - {1}\n2 - {1,2}\n3 - {1,3}\n4 - {1,2,4}\n5 - {1,5}\n6 - {1,2,3,6}\n7 - {1,7}\n8 - {1,2,4,8}\n9 - {1,3,9}\n10 - {1,2,5,10}\n\nphi(1) = 1 {1}\nphi(2) = 1 {1}\nphi(3) = 2 {1,2}\nphi(4) = 2 {1,3} | not with 2\nphi(5) = 4 {1,2,3,4}\nphi(6) = 2 {1,5}\nphi(7) = 6 {1,2,3,4,5,6}\nphi(8) = 4 {1,3,5,7}\nphi(9) = 6 {1,2,4,5,7,8}\nphi(10) = 4 {1,3,7,9}\n\nn = 5\na^phi(m) = 1 (mod m)\n{1,2,3,4} => 20%5 -> 0; if we remove 4, we get 6 6%5=1\nn = 8\n105%8 => 1\n\nlets get all k values whose gcd(k,n) = 1\n\n",
+      "language": "javascript",
+      "createdAt": "2026-06-02T13:28:37.628Z"
+    },
+    {
+      "id": "25074654-e32f-455a-84cc-e446705607ed",
+      "title": "[Sieve][Eulet's Totient] Get Phi Values",
+      "link": "",
+      "difficulty": "Medium",
+      "status": "Not Attempted",
+      "tags": [],
+      "code": "#include <bits/stdc++.h>\n#define MAX 100000\n\ntypedef unsigned long long ull;\nusing namespace std;\n\nvector<int> preprocess() {\n    vector<int> sieve(MAX+1);\n    \n    for(int i=0; i<=MAX; i++) {\n        sieve[i] = i;\n    }\n    \n    for(int p=2; p<=MAX; p++) {\n        if(sieve[p] == p) {\n            sieve[p] = p-1;\n            for(int j = 2*p; j<=MAX; j += p) {\n                sieve[j] = (sieve[j]/p)*(p-1);\n            }\n        }\n    }\n    \n    return sieve;\n}\n\nint main()\n{\n    vector<int> sieve = preprocess(1000000);\n    return 0;\n}\n",
+      "notes": "",
+      "language": "cpp",
+      "createdAt": "2026-06-02T13:53:32.574Z"
+    },
     {
       "id": "cdedee48-fab2-43e9-a472-41f00ce53ed7",
       "title": "Super Pow",

@@ -261,6 +261,24 @@ export default function AdhocView({
 
   const displayProblems = mode === 'daily' ? dailyProblems : problems;
 
+  // In daily mode, ProblemList only sees the day's subset.
+  // Wrap onUpdate so add/delete operate on the full list to avoid data loss.
+  const handleListUpdate = useCallback((nextOrUpdater) => {
+    if (mode === 'all') {
+      onUpdate(nextOrUpdater);
+      return;
+    }
+    // Daily mode: merge changes back into the full list
+    const nextDaily = typeof nextOrUpdater === 'function'
+      ? nextOrUpdater(dailyProblems)
+      : nextOrUpdater;
+    const dailyIds = new Set(dailyProblems.map(p => p.id));
+    const nextDailyIds = new Set(nextDaily.map(p => p.id));
+    // Keep all non-daily problems, remove daily ones that were deleted, add new ones
+    const otherProblems = problems.filter(p => !dailyIds.has(p.id));
+    onUpdate([...nextDaily, ...otherProblems]);
+  }, [mode, onUpdate, problems, dailyProblems]);
+
   return (
     <div className="adhoc-wrap">
       <style>{STYLES}</style>
@@ -305,7 +323,7 @@ export default function AdhocView({
       <div className="adhoc-body">
         <ProblemList
           problems={displayProblems}
-          onUpdate={onUpdate}
+          onUpdate={handleListUpdate}
           onOpenProblem={onOpenProblem}
           hideHeader
         />
