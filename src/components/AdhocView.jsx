@@ -190,12 +190,13 @@ export default function AdhocView({
   const [mode, setMode] = useState('daily'); // 'daily' | 'all'
   const [currentDate, setCurrentDate] = useState(todayKey);
 
-  // Group problems by date (createdAt)
+  // Group problems by date (createdAt converted to local date)
   const problemsByDate = useMemo(() => {
     const map = {};
     for (const p of problems) {
-      const dateKey = (p.createdAt || '').slice(0, 10);
-      if (!dateKey) continue;
+      if (!p.createdAt) continue;
+      const d = new Date(p.createdAt);
+      const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       if (!map[dateKey]) map[dateKey] = [];
       map[dateKey].push(p);
     }
@@ -245,6 +246,25 @@ export default function AdhocView({
     };
   }, [dailyProblems]);
 
+  // In daily mode, ProblemList only sees the day's subset.
+  // Wrap onUpdate so add/delete operate on the full list to avoid data loss.
+  const handleListUpdate = useCallback((nextOrUpdater) => {
+    if (mode === 'all') {
+      onUpdate(nextOrUpdater);
+      return;
+    }
+    // Daily mode: merge changes back into the full list
+    const nextDaily = typeof nextOrUpdater === 'function'
+      ? nextOrUpdater(dailyProblems)
+      : nextOrUpdater;
+    const dailyIds = new Set(dailyProblems.map(p => p.id));
+    // Keep all non-daily problems, remove daily ones that were deleted, add new ones
+    const otherProblems = problems.filter(p => !dailyIds.has(p.id));
+    onUpdate([...nextDaily, ...otherProblems]);
+  }, [mode, onUpdate, problems, dailyProblems]);
+
+  const displayProblems = mode === 'daily' ? dailyProblems : problems;
+
   // If viewing a problem detail
   if (openProblem) {
     return (
@@ -258,26 +278,6 @@ export default function AdhocView({
       </div>
     );
   }
-
-  const displayProblems = mode === 'daily' ? dailyProblems : problems;
-
-  // In daily mode, ProblemList only sees the day's subset.
-  // Wrap onUpdate so add/delete operate on the full list to avoid data loss.
-  const handleListUpdate = useCallback((nextOrUpdater) => {
-    if (mode === 'all') {
-      onUpdate(nextOrUpdater);
-      return;
-    }
-    // Daily mode: merge changes back into the full list
-    const nextDaily = typeof nextOrUpdater === 'function'
-      ? nextOrUpdater(dailyProblems)
-      : nextOrUpdater;
-    const dailyIds = new Set(dailyProblems.map(p => p.id));
-    const nextDailyIds = new Set(nextDaily.map(p => p.id));
-    // Keep all non-daily problems, remove daily ones that were deleted, add new ones
-    const otherProblems = problems.filter(p => !dailyIds.has(p.id));
-    onUpdate([...nextDaily, ...otherProblems]);
-  }, [mode, onUpdate, problems, dailyProblems]);
 
   return (
     <div className="adhoc-wrap">
