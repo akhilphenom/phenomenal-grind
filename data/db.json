@@ -17943,7 +17943,7 @@
         "lowlights": "",
         "gratitude": "",
         "learnings": "",
-        "body": "- https://cses.fi/problemset/task/1071\n- "
+        "body": "- https://cses.fi/problemset/task/1071\n- https://codeforces.com/problemset/problem/1454/A\n- https://codeforces.com/problemset/problem/754/A"
       }
     }
   ],
@@ -18112,10 +18112,10 @@
       "title": "Intuition Builders",
       "parentId": "folder-1780305440965",
       "type": "note",
-      "content": "gcd(a,b) = gcd(a, a+b)\n\nIf a+b = k, gcd(a,b) | k => gcd(a,b)\ngcd(a,b) = gcd(a,a+b) = gcd(a+b,b)\nSo, gcd(a,k) = gcd(b,k)\n\nhttps://www.youtube.com/watch?v=KYujNxC7_oo&list=PLtfqa971vD5Fw0Kz0R9BnnjtVrIXbn72u&index=14\n\n",
+      "content": "gcd(a,b) = gcd(a, a+b)\n\nIf a+b = k, gcd(a,b) | k => gcd(a,b)\ngcd(a,b) = gcd(a,a+b) = gcd(a+b,b)\nSo, gcd(a,k) = gcd(b,k)\n\nhttps://www.youtube.com/watch?v=KYujNxC7_oo&list=PLtfqa971vD5Fw0Kz0R9BnnjtVrIXbn72u&index=14\n\ngcd(a,b)*lcm(a,b) = a*b\n\ngcd(1, x) = 1\nlcm(1, x) = x\n\n",
       "rough": "",
       "createdAt": "2026-06-14T15:57:20.863Z",
-      "updatedAt": "2026-06-14T16:03:41.704Z"
+      "updatedAt": "2026-06-14T20:12:48.425Z"
     },
     {
       "id": "folder-1781464081551",
@@ -18152,16 +18152,16 @@
       "title": "Index",
       "parentId": "folder-1781464729767",
       "type": "note",
-      "content": "CP Sheet: \nhttps://coding75.com/dsa-cp/sheets/expert-sheet\nhttps://codeforces.com/blog/entry/103141\nhttps://youkn0wwho.academy/topic-list\nhttps://pclub.in/roadmap/2024/07/21/cp-roadmap/\n",
+      "content": "CP Sheet: \nhttps://coding75.com/dsa-cp/sheets/expert-sheet\nhttps://codeforces.com/blog/entry/103141\nhttps://youkn0wwho.academy/topic-list\n\nCP Roadmap\nhttps://pclub.in/roadmap/2024/07/21/cp-roadmap/\n\nAll the good tutorials found for Competetive Programming\nhttps://codeforces.com/blog/entry/57282\n\nArjun Bansal's Blog - An intro to Difference Array\nhttps://codeforces.com/blog/entry/78762\n\nProblem Categorization:\nhttps://webclub.nitk.ac.in/blogs/17\n\n\n\n",
       "rough": "",
       "createdAt": "2026-06-14T19:18:55.078Z",
-      "updatedAt": "2026-06-14T19:37:41.557Z"
+      "updatedAt": "2026-06-15T05:23:52.026Z"
     }
   ],
   "preferences": [
     {
       "id": "user",
-      "activeView": "adhoc",
+      "activeView": "notes",
       "notes": {
         "showCode": true,
         "showPreview": false
@@ -18240,6 +18240,42 @@
       "notes": "gcd(a,b) = gcd(a, a+b)\n\nhttps://www.youtube.com/watch?v=KYujNxC7_oo&list=PLtfqa971vD5Fw0Kz0R9BnnjtVrIXbn72u&index=14",
       "language": "javascript",
       "createdAt": "2026-06-14T15:56:37.765Z"
+    },
+    {
+      "id": "dba4dedc-f740-4768-9d28-b59fa5787b05",
+      "title": "Special Permutation",
+      "link": "https://codeforces.com/problemset/problem/1454/A",
+      "difficulty": "Medium",
+      "status": "Solved",
+      "tags": [],
+      "code": "",
+      "notes": "",
+      "language": "javascript",
+      "createdAt": "2026-06-14T20:00:16.199Z"
+    },
+    {
+      "id": "18a039f3-ef0e-4a0f-ab9a-b1927fccb8fb",
+      "title": "EhAb AnD gCd",
+      "link": "https://codeforces.com/problemset/problem/1325/A%C3%A2%C2%81%C2%A3",
+      "difficulty": "Medium",
+      "status": "Solved",
+      "tags": [],
+      "code": "",
+      "notes": "",
+      "language": "javascript",
+      "createdAt": "2026-06-14T20:16:06.583Z"
+    },
+    {
+      "id": "a041eb12-1fc2-483c-a791-e1070cd69f13",
+      "title": "Lesha and array splitting",
+      "link": "https://codeforces.com/problemset/problem/754/A",
+      "difficulty": "Medium",
+      "status": "Solved",
+      "tags": [],
+      "code": "",
+      "notes": "",
+      "language": "javascript",
+      "createdAt": "2026-06-14T20:55:51.317Z"
     }
   ]
 }
