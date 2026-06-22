@@ -18161,7 +18161,7 @@
   "preferences": [
     {
       "id": "user",
-      "activeView": "notes",
+      "activeView": "adhoc",
       "notes": {
         "showCode": true,
         "showPreview": false
@@ -18276,6 +18276,30 @@
       "notes": "",
       "language": "javascript",
       "createdAt": "2026-06-14T20:55:51.317Z"
+    },
+    {
+      "id": "f53b95a3-d6fc-48e0-89e6-4e07d27d2a90",
+      "title": "Reaching points",
+      "link": "https://leetcode.com/problems/reaching-points/description/",
+      "difficulty": "Medium",
+      "status": "Not Attempted",
+      "tags": [],
+      "code": "",
+      "notes": "",
+      "language": "javascript",
+      "createdAt": "2026-06-22T20:11:46.964Z"
+    },
+    {
+      "id": "d46cbf97-1856-4d14-91a1-20aecf3b23cb",
+      "title": "Check if point is reachable",
+      "link": "https://leetcode.com/problems/check-if-point-is-reachable/",
+      "difficulty": "Medium",
+      "status": "Not Attempted",
+      "tags": [],
+      "code": "",
+      "notes": "",
+      "language": "javascript",
+      "createdAt": "2026-06-22T20:12:18.495Z"
     }
   ]
 }
