@@ -17945,6 +17945,18 @@
         "learnings": "",
         "body": "- https://cses.fi/problemset/task/1071\n- https://codeforces.com/problemset/problem/1454/A\n- https://codeforces.com/problemset/problem/754/A"
       }
+    },
+    {
+      "id": "2026-06-23",
+      "routine": {
+        "mood": "",
+        "tags": [],
+        "highlights": "",
+        "lowlights": "",
+        "gratitude": "",
+        "learnings": "",
+        "body": "Hello people, I am planning to prepare for Google India SWE L4/L5 roles, Got to know that google have their own question bank, and they often repeat questions from that, If anyone can give any recently asked questions at google it will be really great, I have also found a few list of questions, here they are.\n\nhttps://leetcode.com/discuss/interview-question/5808829/Important-Questions\nhttps://leetcode.com/discuss/interview-question/5092478/Recent-Google-Interview-Questions-L3L4\nhttps://leetcode.com/discuss/interview-question/6185127/Google-Interview-Question-Compilation\nhttps://leetcode.com/discuss/interview-question/6446148/google-interview-questions-from-2022-2024\nhttps://leetcode.com/discuss/post/8276966/google-l4-banglore-by-anonymous_user-97gh/\nhttps://leetcode.com/discuss/post/5963463/\nhttps://leetcode.com/discuss/post/8265899/google-l4-interview-reject-by-anonymous_-xsc3/\nhttps://leetcode.com/discuss/post/8218498/google-l4-in-person-interview-by-anonymo-eqbq/\nhttps://leetcode.com/discuss/post/7685567/google-interview-l4-by-anonymous_user-6s1j/\nhttps://leetcode.com/discuss/post/8301524/google-interview-experience-l4-by-anonym-gjl3/\nhttps://leetcode.com/discuss/post/8302587/google-interview-question-about-unnotice-6tjm/\nhttps://leetcode.com/discuss/post/8319665/google-l4-interview-experience-bangalore-mwp1/"
+      }
     }
   ],
   "$schema": "./node_modules/json-server/schema.json",
@@ -18300,6 +18312,18 @@
       "notes": "",
       "language": "javascript",
       "createdAt": "2026-06-22T20:12:18.495Z"
+    },
+    {
+      "id": "c63fbbcf-b082-44b7-8684-1b21cb154a0e",
+      "title": "Google Repeated questions",
+      "link": "",
+      "difficulty": "Medium",
+      "status": "Not Attempted",
+      "tags": [],
+      "code": "https://leetcode.com/discuss/interview-question/5808829/Important-Questions\nhttps://leetcode.com/discuss/interview-question/5092478/Recent-Google-Interview-Questions-L3L4\nhttps://leetcode.com/discuss/interview-question/6185127/Google-Interview-Question-Compilation\nhttps://leetcode.com/discuss/interview-question/6446148/google-interview-questions-from-2022-2024\nhttps://leetcode.com/discuss/post/8276966/google-l4-banglore-by-anonymous_user-97gh/\nhttps://leetcode.com/discuss/post/5963463/\nhttps://leetcode.com/discuss/post/8265899/google-l4-interview-reject-by-anonymous_-xsc3/\nhttps://leetcode.com/discuss/post/8218498/google-l4-in-person-interview-by-anonymo-eqbq/\nhttps://leetcode.com/discuss/post/7685567/google-interview-l4-by-anonymous_user-6s1j/\nhttps://leetcode.com/discuss/post/8301524/google-interview-experience-l4-by-anonym-gjl3/\nhttps://leetcode.com/discuss/post/8302587/google-interview-question-about-unnotice-6tjm/\nhttps://leetcode.com/discuss/post/8319665/google-l4-interview-experience-bangalore-mwp1/",
+      "notes": "https://leetcode.com/discuss/interview-question/5808829/Important-Questions\nhttps://leetcode.com/discuss/interview-question/5092478/Recent-Google-Interview-Questions-L3L4\nhttps://leetcode.com/discuss/interview-question/6185127/Google-Interview-Question-Compilation\nhttps://leetcode.com/discuss/interview-question/6446148/google-interview-questions-from-2022-2024\nhttps://leetcode.com/discuss/post/8276966/google-l4-banglore-by-anonymous_user-97gh/\nhttps://leetcode.com/discuss/post/5963463/\nhttps://leetcode.com/discuss/post/8265899/google-l4-interview-reject-by-anonymous_-xsc3/\nhttps://leetcode.com/discuss/post/8218498/google-l4-in-person-interview-by-anonymo-eqbq/\nhttps://leetcode.com/discuss/post/7685567/google-interview-l4-by-anonymous_user-6s1j/\nhttps://leetcode.com/discuss/post/8301524/google-interview-experience-l4-by-anonym-gjl3/\nhttps://leetcode.com/discuss/post/8302587/google-interview-question-about-unnotice-6tjm/\nhttps://leetcode.com/discuss/post/8319665/google-l4-interview-experience-bangalore-mwp1/",
+      "language": "javascript",
+      "createdAt": "2026-06-22T20:35:46.956Z"
     }
   ]
 }
