@@ -9,6 +9,7 @@ import ProblemList from './components/ProblemList';
 import ProblemDetail from './components/ProblemDetail';
 import AdhocView from './components/AdhocView';
 import NotesView from './components/NotesView';
+import { Card, CardContent } from './components/ui/card';
 import {
   fetchProblems, updateProblem as apiUpdateProblem,
   addProblem as apiAddProblem, deleteProblem as apiDeleteProblem,
@@ -273,8 +274,13 @@ export default function App() {
     return (
       <div className="app-layout">
         <Sidebar activeTab={activeTab} onTabChange={handleSetActiveTab} streak={0} />
-        <div className="content-area" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Loading...</p>
+        <div className="content-area items-center justify-center">
+          <Card className="w-56">
+            <CardContent className="flex items-center gap-3 p-5 text-sm text-muted-foreground">
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              Loading your workspace...
+            </CardContent>
+          </Card>
         </div>
       </div>
     );

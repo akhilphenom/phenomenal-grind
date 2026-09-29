@@ -1,3 +1,6 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from './ui/button';
+
 function toLocalDateStr(d) {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -6,7 +9,7 @@ function toLocalDateStr(d) {
 }
 
 export default function DateNav({ date, onDateChange }) {
-  const d = new Date(date + 'T12:00:00');
+  const d = new Date(`${date}T12:00:00`);
   const label = d.toLocaleDateString(undefined, {
     weekday: 'short',
     month: 'long',
@@ -24,16 +27,17 @@ export default function DateNav({ date, onDateChange }) {
   const isToday = date === today;
 
   return (
-    <div className="date-nav">
-      <button className="date-arrow" onClick={() => shift(-1)}>‹</button>
-      <span className="date-label">{label}</span>
-      <button className="date-arrow" onClick={() => shift(1)}>›</button>
-      <button
-        className={`date-today-btn${isToday ? ' current' : ''}`}
-        onClick={() => onDateChange(today)}
-      >
+    <div className="flex items-center gap-2">
+      <Button variant="outline" size="icon" onClick={() => shift(-1)} aria-label="Previous day">
+        <ChevronLeft className="h-4 w-4" />
+      </Button>
+      <span className="min-w-48 text-center text-sm font-medium">{label}</span>
+      <Button variant="outline" size="icon" onClick={() => shift(1)} aria-label="Next day">
+        <ChevronRight className="h-4 w-4" />
+      </Button>
+      <Button variant={isToday ? 'secondary' : 'default'} size="sm" onClick={() => onDateChange(today)}>
         Today
-      </button>
+      </Button>
     </div>
   );
 }

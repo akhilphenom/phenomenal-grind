@@ -18069,10 +18069,10 @@
       "title": "DFS",
       "parentId": "folder-1781334208195",
       "type": "note",
-      "content": "DFS, but as a graph theory. DFS on an unordered graph (Where we have bi directional edges)\n\nCycles\nBi Partite\nBridges\nSimple Cycles\n\nDFS Tree:\n- As a spanning Tree -> minimal edges to connect graph\n- We give it a tag\n- Every edge will be categorized in to 2 types -> span edges, back edges\n- Span edges: u -> v\n- Back edges: Additional edges that usually form a cycle. These are vertical\n- There are no cross edges in the graph\n- If we are at a node, u-> v, v has u as parent, and some other node is also its neightbor but its also visited and not parent, then that edge is a back edge\n- https://www.youtube.com/watch?v=wfNnmv5ohAE&list=PLtfqa971vD5FPhwbTJQW0sCLBeMfdkoPH\n\n\n- There are no cross-edges\n- All back edges are vertical\n\n\nHow to find bridges?\nBridge: They can disconnect the graph into two components\n- Span edges are the ones that can be used as bridge. Back edges cant be. Think of it. Back edge is a shortcut (vertical) - shortcut doesnt change actual road\n- If a back edge is covering span edge, that span edge can't be used as a bridge. Because we still have a shortcut\n- Now how do we find? This helps\n- We will calculate number of back edges covering a node\n- We will use Prefix Sum\n\n\nhttps://codeforces.com/contest/1391/problem/E\n",
+      "content": "DFS, but as a graph theory. DFS on an unordered graph (Where we have bi directional edges)\n\nCycles\nBi Partite\nBridges\nSimple Cycles\n\nDFS Tree:\n- As a spanning Tree -> minimal edges to connect graph\n- We give it a tag\n- Every edge will be categorized in to 2 types -> span edges, back edges\n- Span edges: u -> v\n- Back edges: Additional edges that usually form a cycle. These are vertical\n- There are no cross edges in the graph\n- If we are at a node, u-> v, v has u as parent, and some other node is also its neighbor but its also visited and not parent, then that edge is a back edge\n- https://www.youtube.com/watch?v=wfNnmv5ohAE&list=PLtfqa971vD5FPhwbTJQW0sCLBeMfdkoPH\n\n\n- There are no cross-edges\n- All back edges are vertical\n\n\nHow to find bridges?\nBridge: They can disconnect the graph into two components\n- Span edges are the ones that can be used as bridge. Back edges cant be. Think of it. Back edge is a shortcut (vertical) - shortcut doesnt change actual road\n- If a back edge is covering span edge, that span edge can't be used as a bridge. Because we still have a shortcut\n- Now how do we find? This helps\n- We will calculate number of back edges covering a node\n- We will use Prefix Sum\n\n\nhttps://codeforces.com/contest/1391/problem/E\n",
       "rough": "",
       "createdAt": "2026-06-13T05:32:12.858Z",
-      "updatedAt": "2026-06-13T07:35:13.477Z",
+      "updatedAt": "2026-07-15T19:08:03.144Z",
       "sortOrder": 1,
       "code": "void dfs(int u, int parent) {\n  vis[u] = true;\n\n  for(auto v: adj[u]) {\n    if(v == parent) {\n      continue;\n    }\n    if(vis[v]) { // found back edge from u to v\n      dp[u]++;\n      dp[v]--;\n    } else {\n      dfs(v, u);\n      dp[u] += dp[v];\n      if(dp[v] == 0) {\n        //found bridge\n      }\n    }\n  }\n}",
       "codeLanguage": "cpp"
@@ -18168,12 +18168,33 @@
       "rough": "",
       "createdAt": "2026-06-14T19:18:55.078Z",
       "updatedAt": "2026-06-15T05:23:52.026Z"
+    },
+    {
+      "id": "folder-1784318451090",
+      "title": "Segment Trees",
+      "parentId": null,
+      "type": "folder",
+      "content": "",
+      "rough": "",
+      "createdAt": "2026-07-17T20:00:51.090Z",
+      "updatedAt": "2026-07-17T20:00:54.987Z"
+    },
+    {
+      "id": "note-1784318458321",
+      "title": "Index",
+      "parentId": "folder-1784318451090",
+      "type": "note",
+      "content": "- Store intervals as tree\n- for range queries\n- for updating at an index\n- terms: leaf nodes, internal nodes, top node\n- (l+r)/2 -> mid -> (l,mid) (mid+1,r)\n- in a complete binary tree, internal nodes are (n-1) and n leaf nodes\n- Safe array option is 4*n size\n- left = 2*i+1, right = 2*i+2\n- ",
+      "rough": "",
+      "createdAt": "2026-07-17T20:00:58.321Z",
+      "updatedAt": "2026-07-21T18:13:21.828Z",
+      "codeLanguage": "cpp"
     }
   ],
   "preferences": [
     {
       "id": "user",
-      "activeView": "adhoc",
+      "activeView": "problems",
       "notes": {
         "showCode": true,
         "showPreview": false

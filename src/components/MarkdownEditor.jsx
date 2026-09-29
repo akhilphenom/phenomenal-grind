@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useMemo } from 'react';
+import { Button } from './ui/button';
 
 const TOOLBAR = [
   { label: 'B', title: 'Bold', before: '**', after: '**' },
@@ -420,37 +421,43 @@ export default function MarkdownEditor({ value, onChange, placeholder, label, li
         {TOOLBAR.map((item, i) => {
           if (item.type === 'sep') return <div key={`sep-${i}`} className="md-toolbar-sep" />;
           return (
-            <button
+            <Button
               key={item.label}
               type="button"
-              className="md-toolbar-btn"
+              variant="ghost"
+              size="sm"
+              className="h-7 min-w-7 px-2 font-mono text-xs"
               title={item.title}
               onClick={() => handleToolbar(item)}
             >
               {item.label}
-            </button>
+            </Button>
           );
         })}
 
         <div className="md-toolbar-spacer" />
 
         <div className="md-mode-toggle">
-          <button
+          <Button
             type="button"
-            className={`md-mode-btn${effectiveMode === 'write' ? ' active' : ''}`}
+            variant={effectiveMode === 'write' ? 'default' : 'ghost'}
+            size="sm"
+            className="h-7 rounded-none text-[10px] uppercase"
             onClick={() => setMode('write')}
           >
             Write
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className={`md-mode-btn${effectiveMode === 'preview' ? ' active' : ''}${livePreview ? ' disabled' : ''}`}
+            variant={effectiveMode === 'preview' ? 'default' : 'ghost'}
+            size="sm"
+            className="h-7 rounded-none text-[10px] uppercase"
             onClick={() => !livePreview && setMode('preview')}
             disabled={livePreview}
             title={livePreview ? 'Preview is shown in separate pane' : 'Preview'}
           >
             Preview
-          </button>
+          </Button>
         </div>
       </div>
 

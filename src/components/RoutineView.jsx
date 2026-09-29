@@ -1,5 +1,8 @@
 import { useCallback } from 'react';
 import MarkdownEditor from './MarkdownEditor';
+import { Button } from './ui/button';
+import { Card } from './ui/card';
+import { Textarea } from './ui/textarea';
 
 const MOODS = [
   { emoji: '😫', label: 'Rough' },
@@ -225,84 +228,86 @@ Use **bold**, _italic_, [links](url), \`code\`, and \`\`\`code blocks\`\`\`"
 
       {/* Right — Mood, Tags, Prompts */}
       <div className="journal-right">
-        <div className="journal-mood-section">
+        <Card className="journal-mood-section">
           <div className="journal-section-title">How are you feeling today?</div>
           <div className="journal-mood-row">
             {MOODS.map((m) => (
-              <button
+              <Button
                 key={m.emoji}
                 type="button"
-                className={`journal-mood-btn${journal.mood === m.emoji ? ' active' : ''}`}
+                variant={journal.mood === m.emoji ? 'default' : 'outline'}
+                className="journal-mood-btn h-auto"
                 onClick={() => patch({ mood: m.emoji })}
               >
                 <span className="mood-emoji">{m.emoji}</span>
                 <span className="mood-label">{m.label}</span>
-              </button>
+              </Button>
             ))}
           </div>
 
           <div className="journal-section-title" style={{ marginTop: 14 }}>Day vibes</div>
           <div className="journal-tags-row">
             {TAGS.map((tag) => (
-              <button
+              <Button
                 key={tag}
                 type="button"
-                className={`journal-tag${(journal.tags || []).includes(tag) ? ' active' : ''}`}
+                variant={(journal.tags || []).includes(tag) ? 'default' : 'outline'}
+                size="sm"
+                className="rounded-full"
                 onClick={() => toggleTag(tag)}
               >
                 {tag}
-              </button>
+              </Button>
             ))}
           </div>
-        </div>
+        </Card>
 
         <div className="journal-prompts">
-          <div className="journal-prompt-card">
+          <Card className="journal-prompt-card">
             <div className="journal-prompt-header">
               <span className="prompt-icon">✨</span> Highlights
             </div>
-            <textarea
+            <Textarea
               value={journal.highlights}
               onChange={(e) => patch({ highlights: e.target.value })}
               placeholder="What went well today?"
             />
-          </div>
+          </Card>
 
-          <div className="journal-prompt-card">
+          <Card className="journal-prompt-card">
             <div className="journal-prompt-header">
               <span className="prompt-icon">🔧</span> To Improve
             </div>
-            <textarea
+            <Textarea
               value={journal.lowlights}
               onChange={(e) => patch({ lowlights: e.target.value })}
               placeholder="What could have gone better?"
             />
-          </div>
+          </Card>
 
-          <div className="journal-prompt-card">
+          <Card className="journal-prompt-card">
             <div className="journal-prompt-header">
               <span className="prompt-icon">🙏</span> Gratitude
             </div>
-            <textarea
+            <Textarea
               value={journal.gratitude}
               onChange={(e) => patch({ gratitude: e.target.value })}
               placeholder="What are you grateful for today?"
             />
-          </div>
+          </Card>
 
-          <div className="journal-prompt-card">
+          <Card className="journal-prompt-card">
             <div className="journal-prompt-header">
               <span className="prompt-icon">🧠</span> Learnings
             </div>
-            <textarea
+            <Textarea
               value={journal.learnings}
               onChange={(e) => patch({ learnings: e.target.value })}
               placeholder="New concepts, ideas, or skills picked up..."
             />
-          </div>
+          </Card>
         </div>
       </div>
     </div>
   );
 }
-

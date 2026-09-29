@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import ProblemList from './ProblemList';
 import ProblemDetail from './ProblemDetail';
+import { Button } from './ui/button';
 
 function todayKey() {
   const d = new Date();
@@ -289,28 +290,32 @@ export default function AdhocView({
           <p className="adhoc-subtitle">Practice problems you add daily — track, solve & review</p>
         </div>
         <div className="adhoc-mode-toggle">
-          <button
-            className={`adhoc-mode-btn${mode === 'daily' ? ' active' : ''}`}
+          <Button
+            variant={mode === 'daily' ? 'default' : 'ghost'}
+            size="sm"
+            className="rounded-full"
             onClick={() => setMode('daily')}
           >
             📅 Daily
-          </button>
-          <button
-            className={`adhoc-mode-btn${mode === 'all' ? ' active' : ''}`}
+          </Button>
+          <Button
+            variant={mode === 'all' ? 'default' : 'ghost'}
+            size="sm"
+            className="rounded-full"
             onClick={() => setMode('all')}
           >
             📋 All
-          </button>
+          </Button>
         </div>
       </div>
 
       {mode === 'daily' && (
         <div className="adhoc-daily-nav">
-          <button className="adhoc-nav-btn" onClick={goToPrev} title="Previous day">◀</button>
+          <Button variant="outline" size="icon" onClick={goToPrev} title="Previous day">◀</Button>
           <span className="adhoc-date-label">{formatDateLabel(currentDate)}</span>
-          <button className="adhoc-nav-btn" onClick={goToNext} title="Next day">▶</button>
+          <Button variant="outline" size="icon" onClick={goToNext} title="Next day">▶</Button>
           {currentDate !== todayKey() && (
-            <button className="adhoc-today-btn" onClick={goToToday}>Today</button>
+            <Button variant="secondary" size="sm" onClick={goToToday}>Today</Button>
           )}
           <div className="adhoc-daily-stats">
             <span className="adhoc-stat"><strong>{dailyStats.total}</strong> added</span>

@@ -54,9 +54,9 @@ const DEFAULT_SYSTEM_DESIGN = {
 function Counter({ value, onInc, onDec }) {
   return (
     <div className="counter-controls">
-      <button type="button" onClick={onDec}>−</button>
+      <Button type="button" variant="outline" size="icon" onClick={onDec}>−</Button>
       <span className="counter-value">{value}</span>
-      <button type="button" onClick={onInc}>+</button>
+      <Button type="button" variant="outline" size="icon" onClick={onInc}>+</Button>
     </div>
   );
 }
@@ -89,7 +89,7 @@ function SectionCard({
   onNotesChange,
 }) {
   return (
-    <div className="sd-card">
+    <Card className="sd-card">
       <div className="sd-header">
         <h2>
           <span>{emoji}</span>
@@ -107,26 +107,28 @@ function SectionCard({
         {items.map((item) => {
           const active = selectedItems.includes(item);
           return (
-            <button
+            <Button
               key={item}
               type="button"
-              className={`sd-pill${active ? ' active' : ''}`}
+              variant={active ? 'default' : 'outline'}
+              size="sm"
+              className="rounded-full"
               onClick={() => onToggle(item)}
             >
               {item}
-            </button>
+            </Button>
           );
         })}
       </div>
 
       <div className="sd-block-label">📝 NOTES</div>
-      <textarea
-        className="sd-notes"
+      <Textarea
+        className="sd-notes min-h-28"
         value={notes}
         onChange={(e) => onNotesChange(e.target.value)}
         placeholder={notesPlaceholder}
       />
-    </div>
+    </Card>
   );
 }
 
@@ -354,3 +356,6 @@ export default function SystemDesignView({ dayData, onUpdate }) {
     </div>
   );
 }
+import { Button } from './ui/button';
+import { Card } from './ui/card';
+import { Textarea } from './ui/textarea';

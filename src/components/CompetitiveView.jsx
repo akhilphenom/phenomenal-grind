@@ -27,12 +27,12 @@ const LEETCODE_TOPICS = [
 
 function Counter({ value, onInc, onDec, label, color }) {
   return (
-    <div className="counter-box">
+    <div className="counter-box border bg-background/40">
       {label && <div className="counter-label" style={color ? { color } : {}}>{label}</div>}
       <div className="counter-controls">
-        <button type="button" onClick={onDec}>−</button>
+        <Button type="button" variant="outline" size="icon" className="h-7 w-7" onClick={onDec}>−</Button>
         <span className="counter-value">{value}</span>
-        <button type="button" onClick={onInc}>+</button>
+        <Button type="button" variant="outline" size="icon" className="h-7 w-7" onClick={onInc}>+</Button>
       </div>
     </div>
   );
@@ -95,13 +95,13 @@ export default function CompetitiveView({ dayData, onUpdate }) {
 
   return (
     <div className="competitive-view">
-      <section className="competitive-card competitive-card-full competitive-leetcode-card">
+      <Card className="competitive-card competitive-card-full competitive-leetcode-card">
         <div className="competitive-card-header">
           <div className="competitive-card-title-wrap">
             <span className="competitive-card-icon" aria-hidden="true">🟡</span>
             <h3 className="competitive-card-title">LeetCode</h3>
           </div>
-          <span className="competitive-badge">Primary Focus</span>
+          <Badge>Primary Focus</Badge>
         </div>
 
         <div className="competitive-counter-grid competitive-counter-grid-three">
@@ -139,14 +139,16 @@ export default function CompetitiveView({ dayData, onUpdate }) {
             {LEETCODE_TOPICS.map((topic) => {
               const selected = competitive.leetcode.topics.includes(topic);
               return (
-                <button
+                <Button
                   key={topic}
                   type="button"
-                  className={`competitive-topic-pill${selected ? ' selected' : ''}`}
+                  variant={selected ? 'default' : 'outline'}
+                  size="sm"
+                  className="rounded-full"
                   onClick={() => toggleTopic(topic)}
                 >
                   {topic}
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -154,18 +156,18 @@ export default function CompetitiveView({ dayData, onUpdate }) {
 
         <div className="competitive-section-block">
           <label className="competitive-section-heading" htmlFor="leetcode-notes">📝 NOTES</label>
-          <textarea
+          <Textarea
             id="leetcode-notes"
-            className="competitive-notes-textarea"
+            className="competitive-notes-textarea min-h-24"
             value={competitive.leetcode.notes}
             onChange={(e) => updateCompetitive('leetcode', { notes: e.target.value })}
             placeholder="Notes, patterns, mistakes, or takeaways..."
           />
         </div>
-      </section>
+      </Card>
 
       <div className="competitive-secondary-grid">
-        <section className="competitive-card competitive-platform-card">
+        <Card className="competitive-card competitive-platform-card">
           <div className="competitive-card-header">
             <div className="competitive-card-title-wrap">
               <span className="competitive-card-icon" aria-hidden="true">🔵</span>
@@ -211,14 +213,14 @@ export default function CompetitiveView({ dayData, onUpdate }) {
           <div className="competitive-section-block">
             <div className="competitive-section-heading">CONTEST INFO</div>
             <div className="competitive-input-grid">
-              <input
+              <Input
                 className="competitive-text-input"
                 type="text"
                 value={competitive.codeforces.contestName}
                 onChange={(e) => updateCompetitive('codeforces', { contestName: e.target.value })}
                 placeholder="Contest name (e.g., CF Round #950)"
               />
-              <input
+              <Input
                 className="competitive-text-input"
                 type="text"
                 value={competitive.codeforces.rank}
@@ -230,17 +232,17 @@ export default function CompetitiveView({ dayData, onUpdate }) {
 
           <div className="competitive-section-block">
             <label className="competitive-section-heading" htmlFor="codeforces-notes">📝 NOTES</label>
-            <textarea
+            <Textarea
               id="codeforces-notes"
-              className="competitive-notes-textarea"
+              className="competitive-notes-textarea min-h-24"
               value={competitive.codeforces.notes}
               onChange={(e) => updateCompetitive('codeforces', { notes: e.target.value })}
               placeholder="Contest observations, hacks, mistakes, or editorials to revisit..."
             />
           </div>
-        </section>
+        </Card>
 
-        <section className="competitive-card competitive-platform-card">
+        <Card className="competitive-card competitive-platform-card">
           <div className="competitive-card-header">
             <div className="competitive-card-title-wrap">
               <span className="competitive-card-icon" aria-hidden="true">⚪</span>
@@ -276,16 +278,21 @@ export default function CompetitiveView({ dayData, onUpdate }) {
 
           <div className="competitive-section-block">
             <label className="competitive-section-heading" htmlFor="atcoder-notes">📝 NOTES</label>
-            <textarea
+            <Textarea
               id="atcoder-notes"
-              className="competitive-notes-textarea"
+              className="competitive-notes-textarea min-h-24"
               value={competitive.atcoder.notes}
               onChange={(e) => updateCompetitive('atcoder', { notes: e.target.value })}
               placeholder="Write notes about topics, speed, or contest learnings..."
             />
           </div>
-        </section>
+        </Card>
       </div>
     </div>
   );
 }
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Card } from './ui/card';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';

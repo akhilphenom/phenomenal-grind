@@ -5,6 +5,8 @@ import { python } from '@codemirror/lang-python';
 import { java } from '@codemirror/lang-java';
 import { cpp } from '@codemirror/lang-cpp';
 import { tokyoNight } from '@uiw/codemirror-theme-tokyo-night';
+import { Button } from './ui/button';
+import { Textarea } from './ui/textarea';
 
 const MIN_PANE = 15;
 const DEFAULT_VERTICAL = 40;
@@ -571,10 +573,10 @@ export default function ProblemDetail({ problem = {}, onUpdate, onBack }) {
       <style>{STYLES}</style>
 
       <div className="pd-topbar">
-        <button type="button" className="pd-back-button" onClick={onBack}>
+        <Button type="button" variant="outline" onClick={onBack}>
           <span aria-hidden="true">←</span>
           <span>Back to Problems</span>
-        </button>
+        </Button>
         <div className="pd-topbar-title">Problem Workspace</div>
       </div>
 
@@ -597,14 +599,13 @@ export default function ProblemDetail({ problem = {}, onUpdate, onBack }) {
                 <h1 className="pd-problem-title">{problem.title || 'Untitled Problem'}</h1>
               </div>
 
-              <button
+              <Button
                 type="button"
-                className="pd-open-button"
                 onClick={() => window.open(problem.link, '_blank', 'noopener,noreferrer')}
                 disabled={!problem.link}
               >
                 <span>Open Problem ↗</span>
-              </button>
+              </Button>
 
               <div className="pd-meta-grid">
                 <div className="pd-field">
@@ -646,12 +647,12 @@ export default function ProblemDetail({ problem = {}, onUpdate, onBack }) {
               aria-label="Resize problem info and notes"
             >
               <div className="pd-divider-buttons" onMouseDown={(event) => event.stopPropagation()}>
-                <button type="button" className="pd-toggle" onClick={toggleTopPane} aria-label={isTopCollapsed ? 'Expand problem info pane' : 'Collapse problem info pane'}>
+                <Button type="button" variant="outline" size="icon" className="h-6 w-6 rounded-full" onClick={toggleTopPane} aria-label={isTopCollapsed ? 'Expand problem info pane' : 'Collapse problem info pane'}>
                   {isTopCollapsed ? '↓' : '↑'}
-                </button>
-                <button type="button" className="pd-toggle" onClick={toggleBottomPane} aria-label={isBottomCollapsed ? 'Expand notes pane' : 'Collapse notes pane'}>
+                </Button>
+                <Button type="button" variant="outline" size="icon" className="h-6 w-6 rounded-full" onClick={toggleBottomPane} aria-label={isBottomCollapsed ? 'Expand notes pane' : 'Collapse notes pane'}>
                   {isBottomCollapsed ? '↑' : '↓'}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -662,7 +663,7 @@ export default function ProblemDetail({ problem = {}, onUpdate, onBack }) {
               <div className="pd-pane-header">
                 <p className="pd-pane-label">Notes</p>
               </div>
-              <textarea
+              <Textarea
                 className="pd-notes"
                 value={notes}
                 onChange={(event) => emitUpdate({ notes: event.target.value })}
@@ -680,12 +681,12 @@ export default function ProblemDetail({ problem = {}, onUpdate, onBack }) {
           aria-label="Resize details and editor"
         >
           <div className="pd-divider-buttons" onMouseDown={(event) => event.stopPropagation()}>
-            <button type="button" className="pd-toggle" onClick={toggleLeftPane} aria-label={isLeftCollapsed ? 'Expand details pane' : 'Collapse details pane'}>
+            <Button type="button" variant="outline" size="icon" className="h-6 w-6 rounded-full" onClick={toggleLeftPane} aria-label={isLeftCollapsed ? 'Expand details pane' : 'Collapse details pane'}>
               {isLeftCollapsed ? '→' : '←'}
-            </button>
-            <button type="button" className="pd-toggle" onClick={toggleRightPane} aria-label={isRightCollapsed ? 'Expand editor pane' : 'Collapse editor pane'}>
+            </Button>
+            <Button type="button" variant="outline" size="icon" className="h-6 w-6 rounded-full" onClick={toggleRightPane} aria-label={isRightCollapsed ? 'Expand editor pane' : 'Collapse editor pane'}>
               {isRightCollapsed ? '←' : '→'}
-            </button>
+            </Button>
           </div>
         </div>
 

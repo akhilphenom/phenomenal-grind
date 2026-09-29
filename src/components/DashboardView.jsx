@@ -1,4 +1,8 @@
 import { useMemo, useState } from 'react';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Card } from './ui/card';
+import { Checkbox } from './ui/checkbox';
 
 const DEFAULT_CHECKLIST = [
   'Solve LeetCode problems',
@@ -622,41 +626,41 @@ export default function DashboardView({ allData = {}, date, onUpdateChecklist })
       <style>{DASHBOARD_STYLES}</style>
 
       <div className="dash-stats">
-        <article className="dash-stat-card problems">
+        <Card className="dash-stat-card problems">
           <div className="dash-stat-icon" aria-hidden="true">⚡</div>
           <div className="dash-stat-value">{stats.problemsToday}</div>
           <div className="dash-stat-label">Problems Today</div>
-        </article>
+        </Card>
 
-        <article className="dash-stat-card streak">
+        <Card className="dash-stat-card streak">
           <div className="dash-stat-icon" aria-hidden="true">🔥</div>
           <div className="dash-stat-value">{stats.streak}</div>
           <div className="dash-stat-label">Day Streak</div>
-        </article>
+        </Card>
 
-        <article className="dash-stat-card water">
+        <Card className="dash-stat-card water">
           <div className="dash-stat-icon" aria-hidden="true">✅</div>
           <div className="dash-stat-value">{stats.checklistDone}/{stats.checklistTotal}</div>
           <div className="dash-stat-label">Checklist Done</div>
-        </article>
+        </Card>
 
-        <article className="dash-stat-card work">
+        <Card className="dash-stat-card work">
           <div className="dash-stat-icon" aria-hidden="true">📝</div>
           <div className="dash-stat-value">{stats.journalWords}</div>
           <div className="dash-stat-label">Journal Words</div>
-        </article>
+        </Card>
       </div>
 
-      <section className="dash-heatmap">
+      <Card className="dash-heatmap">
         <div className="heatmap-header">
           <div>
             <h3 className="dash-card-title">📅 Activity Heatmap</h3>
             <span className="heatmap-total-count">{heatmap.totalScore} contributions in {heatmapYear}</span>
           </div>
           <div className="heatmap-year-toggle">
-            <button className="heatmap-year-btn" onClick={() => setHeatmapYear((y) => y - 1)}>◀</button>
-            <span className="heatmap-year-label">{heatmapYear}</span>
-            <button className="heatmap-year-btn" onClick={() => setHeatmapYear((y) => y + 1)}>▶</button>
+            <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => setHeatmapYear((y) => y - 1)}>◀</Button>
+            <Badge variant="secondary">{heatmapYear}</Badge>
+            <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => setHeatmapYear((y) => y + 1)}>▶</Button>
           </div>
         </div>
 
@@ -711,32 +715,35 @@ export default function DashboardView({ allData = {}, date, onUpdateChecklist })
             <span>More</span>
           </div>
         </div>
-      </section>
+      </Card>
 
       <div className="dash-bottom-row">
-        <section className="dash-checklist">
+        <Card className="dash-checklist">
           <div className="dash-card-header">
             <h3 className="dash-card-title">📋 Today's Checklist</h3>
           </div>
 
           <div className="checklist-list">
             {checklistItems.map((item, index) => (
-              <label
+              <div
                 key={`${item.text}-${index}`}
                 className={`checklist-item${item.done ? ' done' : ''}`}
+                onClick={() => handleToggleChecklist(index)}
               >
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={item.done}
-                  onChange={() => handleToggleChecklist(index)}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleToggleChecklist(index);
+                  }}
                 />
                 <span>{item.text}</span>
-              </label>
+              </div>
             ))}
           </div>
-        </section>
+        </Card>
 
-        <section className="dash-weekly">
+        <Card className="dash-weekly">
           <div className="dash-card-header">
             <h3 className="dash-card-title">📊 Weekly Progress</h3>
           </div>
@@ -756,7 +763,7 @@ export default function DashboardView({ allData = {}, date, onUpdateChecklist })
               </div>
             ))}
           </div>
-        </section>
+        </Card>
       </div>
     </div>
   );

@@ -1,4 +1,8 @@
 import { useMemo, useState } from 'react';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Card } from './ui/card';
+import { Input } from './ui/input';
 
 const AVAILABLE_TAGS = [
   'Arrays',
@@ -539,7 +543,7 @@ export default function ProblemList({ problems = [], onUpdate, onOpenProblem, hi
     <div className="pl-wrap">
       <style>{STYLES}</style>
 
-      <section className="pl-card pl-toolbar">
+      <Card className="pl-card pl-toolbar">
         <div className="pl-toolbar-top">
           {!hideHeader && (
             <div className="pl-heading">
@@ -548,14 +552,13 @@ export default function ProblemList({ problems = [], onUpdate, onOpenProblem, hi
             </div>
           )}
           <div className="pl-toolbar-top">
-            <span className="pl-count">{filteredProblems.length} of {problems.length} problems</span>
-            <button
+            <Badge variant="secondary" className="pl-count">{filteredProblems.length} of {problems.length} problems</Badge>
+            <Button
               type="button"
-              className="pl-button pl-button-primary"
               onClick={() => setIsFormOpen((prev) => !prev)}
             >
               {isFormOpen ? 'Hide form' : 'Add problem'}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -563,7 +566,7 @@ export default function ProblemList({ problems = [], onUpdate, onOpenProblem, hi
           <label className="pl-control pl-search">
             <span className="pl-label">Search</span>
             <span className="pl-search-icon">🔍</span>
-            <input
+            <Input
               className="pl-input"
               type="text"
               value={search}
@@ -602,7 +605,7 @@ export default function ProblemList({ problems = [], onUpdate, onOpenProblem, hi
 
           <div className="pl-control" style={{ justifyContent: 'flex-end' }}>
             <span className="pl-label">Filters</span>
-            <button type="button" className="pl-button" onClick={clearFilters}>Clear filters</button>
+            <Button type="button" variant="outline" onClick={clearFilters}>Clear filters</Button>
           </div>
         </div>
 
@@ -610,25 +613,28 @@ export default function ProblemList({ problems = [], onUpdate, onOpenProblem, hi
           <span className="pl-label">Tag filters</span>
           <div className="pl-tag-grid">
             {AVAILABLE_TAGS.map((tag) => (
-              <button
+              <Button
                 key={tag}
                 type="button"
-                className={`pl-tag-button${tagFilters.includes(tag) ? ' active' : ''}`}
+                variant={tagFilters.includes(tag) ? 'default' : 'outline'}
+                size="sm"
+                className="rounded-full"
                 onClick={() => setTagFilters((prev) => toggleInList(prev, tag))}
               >
                 {tag}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
-      </section>
+      </Card>
 
       {isFormOpen && (
+        <Card asChild>
         <form className="pl-card pl-form" onSubmit={handleSubmit}>
           <div className="pl-form-grid">
             <label className="pl-form-field">
               <span className="pl-label">Title</span>
-              <input
+              <Input
                 className="pl-input"
                 type="text"
                 value={form.title}
@@ -640,7 +646,7 @@ export default function ProblemList({ problems = [], onUpdate, onOpenProblem, hi
 
             <label className="pl-form-field">
               <span className="pl-label">Link</span>
-              <input
+              <Input
                 className="pl-input"
                 type="url"
                 value={form.link}
@@ -680,26 +686,29 @@ export default function ProblemList({ problems = [], onUpdate, onOpenProblem, hi
             <span className="pl-label">Tags</span>
             <div className="pl-tag-grid">
               {AVAILABLE_TAGS.map((tag) => (
-                <button
+                <Button
                   key={tag}
                   type="button"
-                  className={`pl-tag-button${form.tags.includes(tag) ? ' active' : ''}`}
+                  variant={form.tags.includes(tag) ? 'default' : 'outline'}
+                  size="sm"
+                  className="rounded-full"
                   onClick={() => updateForm('tags', toggleInList(form.tags, tag))}
                 >
                   {tag}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
 
           <div className="pl-form-actions">
-            <button type="button" className="pl-button" onClick={resetForm}>Reset</button>
-            <button type="submit" className="pl-button pl-button-primary">Save problem</button>
+            <Button type="button" variant="outline" onClick={resetForm}>Reset</Button>
+            <Button type="submit">Save problem</Button>
           </div>
         </form>
+        </Card>
       )}
 
-      <section className="pl-card">
+      <Card className="pl-card">
         {filteredProblems.length > 0 ? (
           <div className="pl-table-wrap">
             <table className="pl-table">
@@ -745,20 +754,20 @@ export default function ProblemList({ problems = [], onUpdate, onOpenProblem, hi
                       </div>
                     </td>
                     <td>
-                      <span className={`pl-pill ${getDifficultyClass(problem.difficulty)}`}>
+                      <Badge variant="outline" className={`pl-pill ${getDifficultyClass(problem.difficulty)}`}>
                         {problem.difficulty}
-                      </span>
+                      </Badge>
                     </td>
                     <td>
-                      <span className={`pl-pill ${getStatusClass(problem.status)}`}>
+                      <Badge variant="outline" className={`pl-pill ${getStatusClass(problem.status)}`}>
                         {problem.status}
-                      </span>
+                      </Badge>
                     </td>
                     <td>
                       {problem.tags?.length ? (
                         <div className="pl-tag-list">
                           {problem.tags.map((tag) => (
-                            <span key={tag} className="pl-tag-pill">{tag}</span>
+                            <Badge key={tag} variant="secondary" className="pl-tag-pill">{tag}</Badge>
                           ))}
                         </div>
                       ) : (
@@ -766,16 +775,17 @@ export default function ProblemList({ problems = [], onUpdate, onOpenProblem, hi
                       )}
                     </td>
                     <td className="pl-actions">
-                      <button
+                      <Button
                         type="button"
-                        className="pl-icon-button"
+                        variant="destructive"
+                        size="sm"
                         onClick={(event) => {
                           event.stopPropagation();
                           handleDelete(problem.id);
                         }}
                       >
                         Delete
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -788,7 +798,7 @@ export default function ProblemList({ problems = [], onUpdate, onOpenProblem, hi
             Try changing the search or filters, or add your first problem.
           </div>
         )}
-      </section>
+      </Card>
     </div>
   );
 }
