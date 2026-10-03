@@ -1,0 +1,25 @@
+id: 2026-06-02
+routine:
+  mood: ""
+  tags: []
+  highlights: ""
+  lowlights: ""
+  gratitude: ""
+  learnings: ""
+  body: |-
+    https://codeforces.com/problemset/problem/4/A
+    https://lightoj.com/problem/mathematically-hard
+    https://codeforces.com/problemset/problem/1514/C%C3%A2%C2%81%C2%A3
+checklist:
+  - text: Solve LeetCode problems
+    done: true
+  - text: System Design study
+    done: false
+  - text: Drink 8 glasses of water
+    done: true
+  - text: Exercise / Workout
+    done: true
+  - text: Log sleep schedule
+    done: false
+  - text: Write daily journal
+    done: true

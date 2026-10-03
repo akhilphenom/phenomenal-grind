@@ -5,16 +5,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"vite\" \"json-server --watch data/db.json --port 3131\"",
+    "dev": "concurrently \"vite\" \"npm run dev:api\"",
     "dev:vite": "vite",
-    "dev:api": "json-server --watch data/db.json --port 3131",
+    "dev:api": "node server/index.js",
+    "migrate:data": "node scripts/migrate-json-data.js",
     "build": "vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.2",
     "concurrently": "^10.0.0",
-    "json-server": "^0.17.4",
     "vite": "^8.0.14"
   },
   "dependencies": {
@@ -23,6 +23,7 @@
     "@codemirror/lang-javascript": "^6.2.5",
     "@codemirror/lang-python": "^6.2.1",
     "@uiw/codemirror-theme-tokyo-night": "^4.25.10",
-    "@uiw/react-codemirror": "^4.25.10"
+    "@uiw/react-codemirror": "^4.25.10",
+    "yaml": "^2.8.1"
   }
 }

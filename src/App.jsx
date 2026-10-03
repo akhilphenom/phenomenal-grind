@@ -51,7 +51,7 @@ export default function App() {
   const saveTimer = useRef(null);
   const prefsTimer = useRef(null);
 
-  // Load all data from json-server on mount
+  // Load all data from the local file API on mount
   useEffect(() => {
     Promise.all([fetchAllDaily(), fetchProblems(), fetchAdhocProblems(), fetchNotes(), fetchPreferences()])
       .then(([daily, probs, adhocProbs, notesData, prefsData]) => {

@@ -1,0 +1,42 @@
+id: 2026-05-31
+routine:
+  mood: ""
+  tags: []
+  highlights: ""
+  lowlights: ""
+  gratitude: ""
+  learnings: ""
+  body: ""
+competitive:
+  leetcode:
+    easy: 0
+    medium: 0
+    hard: 0
+    topics: []
+    notes: ""
+  codeforces:
+    div4: 0
+    div3: 0
+    div2: 0
+    div1: 0
+    contestName: ""
+    rank: ""
+    notes: ""
+  atcoder:
+    abc: 0
+    arc: 0
+    agc: 0
+    notes: ""
+checklist:
+  - text: Solve LeetCode problems
+    done: false
+  - text: System Design study
+    done: false
+  - text: Drink 8 glasses of water
+    done: true
+  - text: Exercise / Workout
+    done: false
+  - text: Log sleep schedule
+    done: false
+  - text: Write daily journal
+    done: false
