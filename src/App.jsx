@@ -52,7 +52,7 @@ export default function App() {
   const saveTimer = useRef(null);
   const prefsTimer = useRef(null);
 
-  // Load all data from json-server on mount
+  // Load all persisted workspace data on mount
   useEffect(() => {
     Promise.all([fetchAllDaily(), fetchProblems(), fetchAdhocProblems(), fetchNotes(), fetchPreferences()])
       .then(([daily, probs, adhocProbs, notesData, prefsData]) => {

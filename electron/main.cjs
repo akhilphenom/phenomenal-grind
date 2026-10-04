@@ -1,36 +1,37 @@
 const { app, BrowserWindow, shell } = require('electron');
 const fs = require('node:fs');
 const path = require('node:path');
-const jsonServer = require('json-server');
+const { createApiServer } = require('../server/api-server.cjs');
+const { FileStore } = require('../server/file-store.cjs');
 
 let apiServer;
 
-function ensureDatabase() {
+function ensureDataDirectory() {
   const dataDirectory = path.join(app.getPath('userData'), 'data');
-  const databasePath = path.join(dataDirectory, 'db.json');
-
   fs.mkdirSync(dataDirectory, { recursive: true });
-  if (!fs.existsSync(databasePath)) {
-    const seedPath = app.isPackaged
-      ? path.join(process.resourcesPath, 'data', 'db.json')
-      : path.join(__dirname, '..', 'data', 'db.json');
-    fs.copyFileSync(seedPath, databasePath);
+
+  const legacyDatabasePath = path.join(dataDirectory, 'db.json');
+  const hasFileData = fs.existsSync(path.join(dataDirectory, 'problems.csv'));
+  if (!hasFileData && fs.existsSync(legacyDatabasePath)) {
+    const database = JSON.parse(fs.readFileSync(legacyDatabasePath, 'utf8'));
+    new FileStore(dataDirectory).importLegacy(database);
+    fs.unlinkSync(legacyDatabasePath);
+  } else if (!hasFileData) {
+    const seedDirectory = app.isPackaged
+      ? path.join(process.resourcesPath, 'data')
+      : path.join(__dirname, '..', 'data');
+    fs.cpSync(seedDirectory, dataDirectory, { recursive: true });
   }
 
-  return databasePath;
+  return dataDirectory;
 }
 
 function startLocalServer() {
-  const server = jsonServer.create();
-  const router = jsonServer.router(ensureDatabase());
-  const middlewares = jsonServer.defaults({
+  const server = createApiServer({
+    dataDirectory: ensureDataDirectory(),
+    staticDirectory: app.isPackaged ? path.join(__dirname, '..', 'dist') : undefined,
     logger: !app.isPackaged,
-    static: app.isPackaged ? path.join(__dirname, '..', 'dist') : undefined,
   });
-
-  server.use(middlewares);
-  server.use(jsonServer.bodyParser);
-  server.use('/api', router);
 
   return new Promise((resolve, reject) => {
     const requestedPort = app.isPackaged ? 0 : 3131;

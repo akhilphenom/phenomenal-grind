@@ -1,0 +1,275 @@
+id,title,difficulty,status,tags,link,language,code,notes,createdAt
+7f012a81-262e-44fb-bd93-1bc583c84690,Permutations,Medium,Solved,,https://cses.fi/problemset/task/1070/,javascript,,,2026-06-14T19:52:04.678Z
+6ec27f4a-e0ca-4a42-982e-5ffa395cf2d6,Mathematically Hard [Phi][Sieve],Medium,Solved,,https://lightoj.com/problem/mathematically-hard,cpp,"#include <bits/stdc++.h>
+
+#define MAX 5000000
+
+typedef unsigned long long ull;
+using namespace std;
+
+vector<int> preCompute () {
+    vector<int> sieve(MAX+1);
+    for(int i=0; i<=MAX; i++) {
+        sieve[i] = i;
+    }
+    
+    for(int p=2; p<=MAX; p++) {
+        if(sieve[p] == p) {
+            sieve[p] = p-1; // phi(p) = p-1 if p is prime
+            for(int k=2*p; k<=MAX; k+=p) { //multiples are 2p,3p,...p^(k-1)p for 1..p^k
+                sieve[k] = (sieve[k]/p) * (p-1);
+            }
+        }
+    }
+    return sieve;
+}
+
+vector<ull> getPrefix(vector<int> &sieve) {
+    vector<ull>prefix(MAX+1, 0);
+    for(int i=1; i<=MAX; i++) {
+        prefix[i] = prefix[i-1] + (ull)sieve[i]*sieve[i];
+    }
+    return prefix;
+}
+
+int main() {
+    int t, a, b;
+    ull sum;
+    cin>>t;
+    vector<int> sieve = preCompute();
+    vector<ull> prefix = getPrefix(sieve);
+    for(int i=1; i<=t; i++) {
+        cin>>a>>b;
+        sum = prefix[b] - prefix[a-1];
+        cout<<""Case ""+to_string(i)+"": ""+to_string(sum)<<endl;
+    }
+    
+    return 0;
+}
+",,2026-06-02T09:45:17.086Z
+59422eb4-a0a9-4cfa-bd66-55a39ae55154,Product 1 modulo N,Medium,Attempted,,https://codeforces.com/problemset/problem/1514/C%C3%A2%C2%81%C2%A3,javascript,"#include <bits/stdc++.h>
+#define MAX 100000
+
+typedef unsigned long long ull;
+using namespace std;
+
+vector<int> getCoprimes (int n) {
+    vector<int> coprimes;
+    for(int i=1; i<n; i++) {
+        if(gcd(i,n)==1) {
+            coprimes.push_back(i);
+        }
+    }
+    return coprimes;
+}
+
+vector<int> getList(vector<int> &coprimes, int n) {
+    vector<int>result;
+    ull product = 1;
+
+    for(auto c: coprimes) {
+        product = (product*c)%n;
+    }
+
+    if(product%n == 1) {
+        result = coprimes;
+    } else {
+        for(auto c: coprimes) {
+            if(c != n-1) {
+                result.push_back(c);
+            }
+        }
+    }
+    return result;
+}
+
+int main()
+{
+    int n;
+    cin>>n;
+    vector<int> coprimes = getCoprimes(n);
+    vector<int> result = getList(coprimes, n);
+    cout<<result.size()<<endl;
+    for(auto num: result) {
+        cout<<num<<"" "";
+    }
+    return 0;
+}","gcd(a,m) = 1
+
+then 
+
+a^phi(m) = 1 (mod m)
+m = n here
+
+phi(p) = p - 1 if p is prime
+
+so nearest prime to n will have highest value: phi(nearest prime to n)
+
+n=8
+1...n-1
+
+4
+1 3 5 7
+
+
+1 - {1}
+2 - {1,2}
+3 - {1,3}
+4 - {1,2,4}
+5 - {1,5}
+6 - {1,2,3,6}
+7 - {1,7}
+8 - {1,2,4,8}
+9 - {1,3,9}
+10 - {1,2,5,10}
+
+phi(1) = 1 {1}
+phi(2) = 1 {1}
+phi(3) = 2 {1,2}
+phi(4) = 2 {1,3} | not with 2
+phi(5) = 4 {1,2,3,4}
+phi(6) = 2 {1,5}
+phi(7) = 6 {1,2,3,4,5,6}
+phi(8) = 4 {1,3,5,7}
+phi(9) = 6 {1,2,4,5,7,8}
+phi(10) = 4 {1,3,7,9}
+
+n = 5
+a^phi(m) = 1 (mod m)
+{1,2,3,4} => 20%5 -> 0; if we remove 4, we get 6 6%5=1
+n = 8
+105%8 => 1
+
+lets get all k values whose gcd(k,n) = 1
+
+",2026-06-02T13:28:37.628Z
+25074654-e32f-455a-84cc-e446705607ed,[Sieve][Eulet's Totient] Get Phi Values,Medium,Not Attempted,,,cpp,"#include <bits/stdc++.h>
+#define MAX 100000
+
+typedef unsigned long long ull;
+using namespace std;
+
+vector<int> preprocess() {
+    vector<int> sieve(MAX+1);
+    
+    for(int i=0; i<=MAX; i++) {
+        sieve[i] = i;
+    }
+    
+    for(int p=2; p<=MAX; p++) {
+        if(sieve[p] == p) {
+            sieve[p] = p-1;
+            for(int j = 2*p; j<=MAX; j += p) {
+                sieve[j] = (sieve[j]/p)*(p-1);
+            }
+        }
+    }
+    
+    return sieve;
+}
+
+int main()
+{
+    vector<int> sieve = preprocess(1000000);
+    return 0;
+}
+",,2026-06-02T13:53:32.574Z
+cdedee48-fab2-43e9-a472-41f00ce53ed7,Super Pow,Medium,Solved,,https://leetcode.com/problems/super-pow/description/,cpp,"class Solution {
+public:
+    const int m = 1337;
+
+    int calculatePhi(vector<pair<int,int>> &factors) {
+        int product = 1;
+        for(auto [p, k]: factors) {
+            product *= pow(p,k) - pow(p, k-1);
+        }
+        return product;
+    }
+
+    vector<pair<int,int>> primeFactorization (int n) {
+        vector<pair<int,int>> factors;
+        for(int i=2; i*i<=n; i++) {
+            if(n%i) {
+                continue;
+            }
+            pair<int, int> p = {i, 0};
+            while(n%i == 0) {
+                p.second++;
+                n/=i;
+            }
+            factors.push_back(p);
+        }
+        if(n>1) {
+            factors.push_back({n,1});
+        }
+        return factors;
+    }
+
+    int constructExponent(vector<int> &b, int phi) {
+        int exp = 0;
+        for(auto d: b) {
+            exp = (exp*10 + d)%phi;
+        }
+        if(exp == 0) {
+            exp = phi;
+        }
+        return exp;
+    }
+
+    int modularExponentiation(int base, int exponent, int mod) {
+        int result = 1;
+        base %= mod;
+        while(exponent) {
+            if(exponent%2) {
+                result = (result*base)%mod;
+            }
+            base = (base*base)%mod;
+            exponent/=2;
+        }
+        return result;
+    }
+
+    int superPow(int a, vector<int>& b) {
+        vector<pair<int,int>> factors = primeFactorization(m);
+        int phi = calculatePhi(factors);
+        int exponent = constructExponent(b, phi);
+        return modularExponentiation(a, exponent, m);
+    }
+};","phi(a.b) = phi(a).phi(b)
+        phi(p^k) = p^k - p^(k-1)
+        1337 prime factorization = [7^1, 191^1]
+
+Euler's Totient Application: a^n === a^(n mod phi(m)) mod m;
+        if a = 2147483647 (too large, I got inf already). Thinking of 2^31-1, mostly 3 TC will pass :)
+        Don't just return (int)pow(a, exponent)%m, use binary exponentiation",2026-06-14T12:03:36.914Z
+3ee7a9bb-a9b2-4637-9752-6e6d637b8c80,Madoka and The Best University,Medium,Not Attempted,,https://codeforces.com/contest/1717/problem/E%C3%A2%C2%81%C2%A3,javascript,,"gcd(a,b) = gcd(a, a+b)
+
+https://www.youtube.com/watch?v=KYujNxC7_oo&list=PLtfqa971vD5Fw0Kz0R9BnnjtVrIXbn72u&index=14",2026-06-14T15:56:37.765Z
+dba4dedc-f740-4768-9d28-b59fa5787b05,Special Permutation,Medium,Solved,,https://codeforces.com/problemset/problem/1454/A,javascript,,,2026-06-14T20:00:16.199Z
+18a039f3-ef0e-4a0f-ab9a-b1927fccb8fb,EhAb AnD gCd,Medium,Solved,,https://codeforces.com/problemset/problem/1325/A%C3%A2%C2%81%C2%A3,javascript,,,2026-06-14T20:16:06.583Z
+a041eb12-1fc2-483c-a791-e1070cd69f13,Lesha and array splitting,Medium,Solved,,https://codeforces.com/problemset/problem/754/A,javascript,,,2026-06-14T20:55:51.317Z
+f53b95a3-d6fc-48e0-89e6-4e07d27d2a90,Reaching points,Medium,Not Attempted,,https://leetcode.com/problems/reaching-points/description/,javascript,,,2026-06-22T20:11:46.964Z
+d46cbf97-1856-4d14-91a1-20aecf3b23cb,Check if point is reachable,Medium,Not Attempted,,https://leetcode.com/problems/check-if-point-is-reachable/,javascript,,,2026-06-22T20:12:18.495Z
+c63fbbcf-b082-44b7-8684-1b21cb154a0e,Google Repeated questions,Medium,Not Attempted,,,javascript,"https://leetcode.com/discuss/interview-question/5808829/Important-Questions
+https://leetcode.com/discuss/interview-question/5092478/Recent-Google-Interview-Questions-L3L4
+https://leetcode.com/discuss/interview-question/6185127/Google-Interview-Question-Compilation
+https://leetcode.com/discuss/interview-question/6446148/google-interview-questions-from-2022-2024
+https://leetcode.com/discuss/post/8276966/google-l4-banglore-by-anonymous_user-97gh/
+https://leetcode.com/discuss/post/5963463/
+https://leetcode.com/discuss/post/8265899/google-l4-interview-reject-by-anonymous_-xsc3/
+https://leetcode.com/discuss/post/8218498/google-l4-in-person-interview-by-anonymo-eqbq/
+https://leetcode.com/discuss/post/7685567/google-interview-l4-by-anonymous_user-6s1j/
+https://leetcode.com/discuss/post/8301524/google-interview-experience-l4-by-anonym-gjl3/
+https://leetcode.com/discuss/post/8302587/google-interview-question-about-unnotice-6tjm/
+https://leetcode.com/discuss/post/8319665/google-l4-interview-experience-bangalore-mwp1/","https://leetcode.com/discuss/interview-question/5808829/Important-Questions
+https://leetcode.com/discuss/interview-question/5092478/Recent-Google-Interview-Questions-L3L4
+https://leetcode.com/discuss/interview-question/6185127/Google-Interview-Question-Compilation
+https://leetcode.com/discuss/interview-question/6446148/google-interview-questions-from-2022-2024
+https://leetcode.com/discuss/post/8276966/google-l4-banglore-by-anonymous_user-97gh/
+https://leetcode.com/discuss/post/5963463/
+https://leetcode.com/discuss/post/8265899/google-l4-interview-reject-by-anonymous_-xsc3/
+https://leetcode.com/discuss/post/8218498/google-l4-in-person-interview-by-anonymo-eqbq/
+https://leetcode.com/discuss/post/7685567/google-interview-l4-by-anonymous_user-6s1j/
+https://leetcode.com/discuss/post/8301524/google-interview-experience-l4-by-anonym-gjl3/
+https://leetcode.com/discuss/post/8302587/google-interview-question-about-unnotice-6tjm/
+https://leetcode.com/discuss/post/8319665/google-l4-interview-experience-bangalore-mwp1/",2026-06-22T20:35:46.956Z
